@@ -1,0 +1,155 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.1.0.0/24",
+      "metadata": {
+        "description": "Virtual Network CIDR Address Space"
+      }
+    },
+    "subnet1Prefix": {
+      "type": "string",
+      "defaultValue": "10.1.0.0/25",
+      "metadata": {
+        "description": "Subnet 1 CIDR"
+      }
+    },
+    "subnet2Prefix": {
+      "type": "string",
+      "defaultValue": "10.1.0.128/26",
+      "metadata": {
+        "description": "Subnet 2 CIDR"
+      }
+    },
+    "subnet3Prefix": {
+      "type": "string",
+      "defaultValue": "10.1.0.192/27",
+      "metadata": {
+        "description": "Subnet 3 CIDR"
+      }
+    }
+  },
+  "variables": {
+    "RgNameClean": "[toLower(replace(resourceGroup().name,'-', ''))]",
+    "VNetName": "[concat(variables('RgNameClean'), '-VNet')]",
+    "VNetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('VNetName'))]",
+    "Subnet1Name": "appTier",
+    "Subnet2Name": "dataTier",
+    "Subnet3Name": "dmz",
+    "Nsg1Name": "[concat(variables('Subnet1Name'), '-nsg')]",
+    "Nsg2Name": "[concat(variables('Subnet2Name'), '-nsg')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('nsg1Name')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Network Security Group - App Subnet"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "mysql_rule",
+            "properties": {
+              "description": "Allow SQL",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3306",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 120,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('nsg2Name')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Network Security Group - Data Subnet"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "web_rule",
+            "properties": {
+              "description": "Allow Web",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "comments": "## Virtual Network ##",
+      "name": "[variables('VNetName')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg1Name'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg2Name'))]"
+      ],
+      "tags": {
+        "displayName": "Virtual Network"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('VNetPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('Subnet1Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('Subnet1Prefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg1Name'))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('Subnet2Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('Subnet2Prefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg2Name'))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('Subnet3Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('Subnet3Prefix')]"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "properties": {
+      "type": "object",
+      "value": {
+        "vnetId": "[variables('vnetId')]"
+      }
+    }
+  }
+}

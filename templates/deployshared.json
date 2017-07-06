@@ -1,0 +1,110 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "uniquePrefix": {
+      "type": "string"
+    },
+    "sasToken": {
+      "type": "string"
+    },
+    "vnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network CIDR Address Space"
+      }
+    },
+    "subnet1Prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet 1 CIDR"
+      }
+    },
+    "subnet2Prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet 2 CIDR"
+      }
+    },
+    "subnet3Prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet 3 CIDR"
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "metadata": {
+        "description": "Account type, premium vs standard, and local, global redundancy"
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "TemplateVNet",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/vnet.json'), parameters('sasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vnetPrefix": {
+            "value": "[parameters('vnetPrefix')]"
+          },
+          "subnet1Prefix": {
+            "value": "[parameters('subnet1Prefix')]"
+          },
+          "subnet2Prefix": {
+            "value": "[parameters('subnet2Prefix')]"
+          },
+          "subnet3Prefix": {
+            "value": "[parameters('subnet3Prefix')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "TemplateStorage",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/storageaccount.json'), parameters('sasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "storageAccountType": {
+            "value": "[parameters('storageAccountType')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "linkedTemplate",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/helloworld.json'), parameters('sasToken'))]",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "vnetTemplate": {
+      "type": "object",
+      "value": "[reference('TemplateVNet').outputs.properties.value]"
+    },
+    "storageTemplate": {
+      "type": "object",
+      "value": "[reference('TemplateStorage').outputs.properties.value]"
+    }
+  }
+}
