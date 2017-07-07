@@ -83,12 +83,12 @@ az storage blob upload-batch \
   --connection-string ${CONNECTION}
 
 
-###############################
-## Automation Resource Group ##
-###############################
+########################################
+## Shared Resource Group and Template ##
+########################################
 tput setaf 2; echo 'Creating the shared resource group...' ; tput sgr0
 
-CATEGORY=shared
+CATEGORY=Shared
 AZURE_RESOURCE_GROUP=${UNIQUE}-${CATEGORY}
 RESULT=$(az group show --name ${AZURE_RESOURCE_GROUP})
 if [ "$RESULT"  == "" ]
@@ -100,10 +100,7 @@ if [ "$RESULT"  == "" ]
 		echo "Resource Group ${AZURE_RESOURCE_GROUP} already exists."
 	fi
 
-###############################
-## Deploy ARM Template       ##
-###############################
-tput setaf 2; echo 'Deploying Parent Template...' ; tput sgr0
+tput setaf 2; echo 'Deploying Shared Template...' ; tput sgr0
 
 EXPIRE_TIME=$(date -v+30M -u +%Y-%m-%dT%H:%MZ)
 TOKEN=$(az storage container generate-sas --name templates \
@@ -122,4 +119,49 @@ az group deployment create \
   --template-uri ${URL}?${TOKEN} \
   --parameters @deploy${CATEGORY}.params.json \
   --parameters uniquePrefix=${UNIQUE} sasToken="?${TOKEN}" \
+  --query [properties.outputs] --output jsonc
+
+# Obtain Required Parameters
+BACKENDSUBNET=$(az network vnet subnet show --name dataTier \
+  --resource-group ${AZURE_RESOURCE_GROUP} \
+  --vnet-name ${UNIQUE}-vnet \
+  --query id -otsv)
+
+
+#####################################
+## App Resource Group and Template ##
+#####################################
+tput setaf 2; echo 'Creating the app resource group...' ; tput sgr0
+
+CATEGORY=App
+AZURE_RESOURCE_GROUP=${UNIQUE}-${CATEGORY}
+RESULT=$(az group show --name ${AZURE_RESOURCE_GROUP})
+if [ "$RESULT"  == "" ]
+	then
+		az group create \
+      --location ${AZURE_LOCATION} \
+      --name ${AZURE_RESOURCE_GROUP}
+	else
+		echo "Resource Group ${AZURE_RESOURCE_GROUP} already exists."
+	fi
+
+tput setaf 2; echo 'Deploying App Template...' ; tput sgr0
+
+EXPIRE_TIME=$(date -v+30M -u +%Y-%m-%dT%H:%MZ)
+TOKEN=$(az storage container generate-sas --name templates \
+  --expiry ${EXPIRE_TIME} \
+  --permissions r \
+  --connection-string ${CONNECTION} \
+  --output tsv)
+
+URL=$(az storage blob url --name deploy${CATEGORY}.json \
+  --container-name ${AZURE_STORAGE_CONTAINER} \
+  --connection-string ${CONNECTION} \
+  --output tsv)
+
+az group deployment create \
+  --resource-group ${AZURE_RESOURCE_GROUP} \
+  --template-uri ${URL}?${TOKEN} \
+  --parameters @deploy${CATEGORY}.params.json \
+  --parameters uniquePrefix=${UNIQUE} sasToken="?${TOKEN}" backendSubnetId=${BACKENDSUBNET} \
   --query [properties.outputs] --output jsonc

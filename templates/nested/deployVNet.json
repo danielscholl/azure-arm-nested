@@ -2,6 +2,9 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "unique": {
+      "type": "string"
+    },
     "vnetPrefix": {
       "type": "string",
       "defaultValue": "10.1.0.0/24",
@@ -32,8 +35,7 @@
     }
   },
   "variables": {
-    "RgNameClean": "[toLower(replace(resourceGroup().name,'-', ''))]",
-    "VNetName": "[concat(variables('RgNameClean'), '-VNet')]",
+    "VNetName": "[concat(parameters('unique'), '-VNet')]",
     "VNetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('VNetName'))]",
     "Subnet1Name": "appTier",
     "Subnet2Name": "dataTier",
@@ -145,10 +147,11 @@
     }
   ],
   "outputs": {
-    "properties": {
+    "virtualNetwork": {
       "type": "object",
       "value": {
-        "vnetId": "[variables('vnetId')]"
+        "id": "[variables('VNetId')]",
+        "name": "[variables('VNetName')]"
       }
     }
   }

@@ -1,0 +1,194 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "omsWorkspaceRegion": {
+      "type": "string",
+      "defaultValue": "East US",
+      "allowedValues": [
+        "East US",
+        "West Europe",
+        "Southeast Asia",
+        "Australia Southeast"
+      ],
+      "metadata": {
+        "description": "Specify the region for your Workspace"
+      }
+    }
+  },
+  "variables": {
+    "cleanResourceGroup": "[toLower(replace(resourceGroup().name,'-', ''))]",
+    "omsWorkspaceName": "[concat(variables('cleanResourceGroup'), '-oms')]",
+    "omsWorkspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('omsWorkspaceName'))]",
+    "batch1": {
+      "solutions": [
+        {
+          "name": "[concat('Security', '(', variables('omsWorkspaceName'), ')')]",
+          "marketplaceName": "Security"
+        },
+        {
+          "name": "[concat('AgentHealthAssessment', '(', variables('omsWorkspaceName'), ')')]",
+          "marketplaceName": "AgentHealthAssessment"
+        },
+        {
+          "name": "[concat('ChangeTracking', '(', variables('omsWorkspaceName'), ')')]",
+          "marketplaceName": "ChangeTracking"
+        },
+        {
+          "name": "[concat('Updates', '(', variables('omsWorkspaceName'), ')')]",
+          "marketplaceName": "Updates"
+        },
+        {
+          "name": "[concat('AzureActivity', '(', variables('omsWorkspaceName'), ')')]",
+          "marketplaceName": "AzureActivity"
+        }
+      ]
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-11-01-preview",
+      "location": "[parameters('omsWorkspaceRegion')]",
+      "name": "[variables('omsWorkspaceName')]",
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "comments": "Log Analytics workspace",
+      "properties": {
+        "sku": {
+          "name": "free"
+        }
+      },
+      "resources": [
+        {
+          "name": "AzureActivityLog",
+          "type": "datasources",
+          "apiVersion": "2015-11-01-preview",
+          "dependsOn": [
+            "[variables('omsWorkspaceId')]"
+          ],
+          "kind": "AzureActivityLog",
+          "properties": {
+            "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
+          }
+        },
+        {
+          "apiVersion": "2015-11-01-preview",
+          "type": "datasources",
+          "name": "Linux",
+          "dependsOn": [
+            "[variables('omsWorkspaceId')]"
+          ],
+          "kind": "LinuxPerformanceObject",
+          "properties": {
+            "performanceCounters": [
+              {
+                "counterName": "% Used Inodes"
+              },
+              {
+                "counterName": "Free Megabytes"
+              },
+              {
+                "counterName": "% Used Space"
+              },
+              {
+                "counterName": "Disk Transfers/sec"
+              },
+              {
+                "counterName": "Disk Reads/sec"
+              },
+              {
+                "counterName": "Disk Writes/sec"
+              }
+            ],
+            "objectName": "Logical Disk",
+            "instanceName": "*",
+            "intervalSeconds": 10
+          }
+        },
+        {
+          "apiVersion": "2015-11-01-preview",
+          "type": "datasources",
+          "name": "LinuxPerfCollection",
+          "dependsOn": [
+            "[variables('omsWorkspaceId')]"
+          ],
+          "kind": "LinuxPerformanceCollection",
+          "properties": {
+            "state": "Enabled"
+          }
+        },
+        {
+          "apiVersion": "2015-11-01-preview",
+          "type": "datasources",
+          "name": "Syslog",
+          "dependsOn": [
+            "[variables('omsWorkspaceId')]"
+          ],
+          "kind": "LinuxSyslog",
+          "properties": {
+            "syslogName": "kern",
+            "syslogSeverities": [
+              {
+                "severity": "emerg"
+              },
+              {
+                "severity": "alert"
+              },
+              {
+                "severity": "crit"
+              },
+              {
+                "severity": "err"
+              },
+              {
+                "severity": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "apiVersion": "2015-11-01-preview",
+          "type": "datasources",
+          "name": "SyslogCollection",
+          "dependsOn": [
+            "[variables('omsWorkspaceId')]"
+          ],
+          "kind": "LinuxSyslogCollection",
+          "properties": {
+            "state": "Enabled"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2015-11-01-preview",
+      "type": "Microsoft.OperationsManagement/solutions",
+      "name": "[concat(variables('batch1').solutions[copyIndex()].Name)]",
+      "location": "[parameters('omsWorkspaceRegion')]",
+      "dependsOn": [
+        "[variables('omsWorkspaceId')]"
+      ],
+      "copy": {
+        "name": "solutionCopy",
+        "count": "[length(variables('batch1').solutions)]"
+      },
+      "properties": {
+        "workspaceResourceId": "[variables('omsWorkspaceId')]"
+      },
+      "plan": {
+        "name": "[variables('batch1').solutions[copyIndex()].name]",
+        "product": "[concat('OMSGallery/', variables('batch1').solutions[copyIndex()].marketplaceName)]",
+        "promotionCode": "",
+        "publisher": "Microsoft"
+      }
+    }
+  ],
+  "outputs": {
+    "omsWorkspace": {
+      "type": "object",
+      "value": {
+        "id": "[variables('omsWorkspaceId')]",
+        "name": "[variables('omsWorkspaceName')]"
+      }
+    }
+  }
+}

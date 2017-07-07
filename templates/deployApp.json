@@ -1,0 +1,115 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "uniquePrefix": {
+      "type": "string"
+    },
+    "sasToken": {
+      "type": "string"
+    },
+    "backendSubnetId": {
+      "type": "string",
+      "metadata": {
+        "description": "Backend Subnet Id"
+      }
+    },
+    "vmName": {
+      "metadata": {
+        "description": "Virtual Machine 1 Server Name."
+      },
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "db"
+    },
+    "vmSize": {
+      "metadata": {
+        "description": "The virtual machine server size."
+      },
+      "type": "string",
+      "defaultValue": "Standard_DS1_v2"
+    },
+    "adminUserName": {
+      "metadata": {
+        "description": "Linux servers admin user account name."
+      },
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "azureuser"
+    },
+    "adminPassword": {
+      "metadata": {
+        "description": "Linux servers admin user account name."
+      },
+      "type": "string"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "TemplateLoadBalancer",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployLoadBalancer.json'), parameters('sasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "unique": {
+            "value": "[parameters('uniquePrefix')]"
+          },
+          "subnetId": {
+            "value": "[parameters('backendSubnetId')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "TemplateVirtualMachine",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployVirtualMachine.json'), parameters('sasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "unique": {
+            "value": "[parameters('uniquePrefix')]"
+          },
+          "subnetId": {
+            "value": "[parameters('backendSubnetId')]"
+          },
+          "loadBalancerId": {
+            "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value.id]"
+          },
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          },
+          "adminUserName": {
+            "value": "[parameters('adminUserName')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "loadBalancer": {
+      "type": "object",
+      "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value]"
+    },
+    "virtualMachines": {
+      "type": "object",
+      "value": "[reference('TemplateVirtualMachine').outputs.virtualMachines.value]"
+    }
+  }
+}

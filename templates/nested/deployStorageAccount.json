@@ -47,12 +47,12 @@
     }
   ],
   "outputs": {
-    "properties": {
+    "storageAccount": {
       "type": "object",
       "value": {
-        "accountName": "[variables('storageAccountName')]",
-        "primaryKey": "[listKeys(variables('storageId'), '2016-01-01').keys[0].value]",
-        "accountId": "[variables('storageId')]"
+        "id": "[variables('storageId')]",
+        "name": "[variables('storageAccountName')]",
+        "key": "[listKeys(variables('storageId'), '2016-01-01').keys[0].value]"
       }
     }
   }

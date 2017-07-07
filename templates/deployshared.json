@@ -37,6 +37,19 @@
       "metadata": {
         "description": "Account type, premium vs standard, and local, global redundancy"
       }
+    },
+    "omsWorkspaceRegion": {
+      "type": "string",
+      "defaultValue": "West Europe",
+      "allowedValues": [
+        "East US",
+        "West Europe",
+        "Southeast Asia",
+        "Australia Southeast"
+      ],
+      "metadata": {
+        "description": "Specify the region for your Workspace"
+      }
     }
   },
   "variables": {},
@@ -48,10 +61,13 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/vnet.json'), parameters('sasToken'))]",
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployVNet.json'), parameters('sasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
+          "unique": {
+            "value": "[parameters('uniquePrefix')]"
+          },
           "vnetPrefix": {
             "value": "[parameters('vnetPrefix')]"
           },
@@ -74,7 +90,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/storageaccount.json'), parameters('sasToken'))]",
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployStorageAccount.json'), parameters('sasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -85,26 +101,35 @@
       }
     },
     {
-      "apiVersion": "2017-05-10",
-      "name": "linkedTemplate",
+      "name": "TemplateOmsWorkspace",
       "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/helloworld.json'), parameters('sasToken'))]",
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployOmsWorkspace.json'), parameters('sasToken'))]",
           "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "omsWorkspaceRegion": {
+            "value": "[parameters('omsWorkspaceRegion')]"
+          }
         }
       }
     }
   ],
   "outputs": {
-    "vnetTemplate": {
+    "virtualNetwork": {
       "type": "object",
-      "value": "[reference('TemplateVNet').outputs.properties.value]"
+      "value": "[reference('TemplateVNet').outputs.virtualNetwork.value]"
     },
-    "storageTemplate": {
+    "storageAccount": {
       "type": "object",
-      "value": "[reference('TemplateStorage').outputs.properties.value]"
+      "value": "[reference('TemplateStorage').outputs.storageAccount.value]"
+    },
+    "omsWorkspace": {
+      "type": "object",
+      "value": "[reference('TemplateOmsWorkspace').outputs.omsWorkspace.value]"
     }
   }
 }
