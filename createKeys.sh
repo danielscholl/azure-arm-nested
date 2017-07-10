@@ -23,4 +23,4 @@ if [ -z $1 ]; then
 fi
 
 mkdir .ssh && cd .ssh
-ssh-keygen -t rsa -b 4096 -C $1 -f id_rsa
+ssh-keygen -t rsa -b 2048 -C $1 -f id_rsa
