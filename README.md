@@ -21,9 +21,8 @@ $ az login
 
 3. Copy the .env_sample to .env and set required global environment variables
 
-```bash
-$ az account show --query id -otsv
-```
+>NOTE: To get subscription id for an account.  az account show --query id -otsv
+
 
 4. Create a private .params directory and copy the params file to it.
 
