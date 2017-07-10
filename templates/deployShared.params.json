@@ -19,6 +19,15 @@
     },
     "omsWorkspaceRegion": {
       "value": "East US"
+    },
+    "adminUserName": {
+      "value": "azureuser"
+    },
+    "servicePrincipalAppId": {
+      "value": "<user_object_id>"
+    },
+    "sshKeyData": {
+      "value": "<ssh_public_key>"
     }
   }
 }

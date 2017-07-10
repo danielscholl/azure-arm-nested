@@ -14,6 +14,12 @@
         "description": "Backend Subnet Id"
       }
     },
+    "keyVaultId": {
+      "type": "string",
+      "metadata": {
+        "description": "KeyVault Id"
+      }
+    },
     "vmName": {
       "metadata": {
         "description": "Virtual Machine 1 Server Name."
@@ -28,20 +34,6 @@
       },
       "type": "string",
       "defaultValue": "Standard_DS1_v2"
-    },
-    "adminUserName": {
-      "metadata": {
-        "description": "Linux servers admin user account name."
-      },
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "azureuser"
-    },
-    "adminPassword": {
-      "metadata": {
-        "description": "Linux servers admin user account name."
-      },
-      "type": "string"
     }
   },
   "variables": {},
@@ -93,10 +85,20 @@
             "value": "[parameters('vmSize')]"
           },
           "adminUserName": {
-            "value": "[parameters('adminUserName')]"
+            "reference": {
+              "keyVault": {
+                "id": "[parameters('keyVaultId')]"
+              },
+              "secretName": "adminUserName"
+            }
           },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
+          "sshKeyData": {
+            "reference": {
+              "keyVault": {
+                "id": "[parameters('keyVaultId')]"
+              },
+              "secretName": "sshPublicKey"
+            }
           }
         }
       }
@@ -107,9 +109,13 @@
       "type": "object",
       "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value]"
     },
-    "virtualMachines": {
+    "availabilitySet": {
       "type": "object",
-      "value": "[reference('TemplateVirtualMachine').outputs.virtualMachines.value]"
+      "value": "[reference('TemplateVirtualMachine').outputs.availabilitySet.value]"
+    },
+    "virtualMachine": {
+      "type": "object",
+      "value": "[reference('TemplateVirtualMachine').outputs.virtualMachine.value]"
     }
   }
 }

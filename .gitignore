@@ -4,6 +4,7 @@ yarn-error.log
 .env
 .env.sh
 .ssh
+.params
 .DS_Store
 .vscode/
 **/azuredeploy.parameters.json

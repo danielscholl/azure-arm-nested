@@ -50,6 +50,26 @@
       "metadata": {
         "description": "Specify the region for your Workspace"
       }
+    },
+    "servicePrincipalAppId": {
+      "type": "string",
+      "metadata": {
+        "description": "Service Principal App ID (also called Client ID) that has contributor rights to the subscription used for this deployment. It is used by Spinnaker to dynamically manage resources."
+      }
+    },
+    "adminUserName": {
+      "metadata": {
+        "description": "Linux servers admin user account name."
+      },
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "azureuser"
+    },
+    "sshKeyData": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SSH public key to set on linux VM"
+      }
     }
   },
   "variables": {},
@@ -116,6 +136,32 @@
           }
         }
       }
+    },
+    {
+      "name": "TemplateKeyVault",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployKeyVault.json'), parameters('sasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "unique": {
+            "value": "[parameters('uniquePrefix')]"
+          },
+          "servicePrincipalAppId": {
+            "value": "[parameters('servicePrincipalAppId')]"
+          },
+          "adminUserName": {
+            "value": "[parameters('adminUserName')]"
+          },
+          "publicSSHKeyData": {
+            "value": "[parameters('sshKeyData')]"
+          }
+        }
+      }
     }
   ],
   "outputs": {
@@ -126,6 +172,10 @@
     "storageAccount": {
       "type": "object",
       "value": "[reference('TemplateStorage').outputs.storageAccount.value]"
+    },
+    "keyVault": {
+      "type": "object",
+      "value": "[reference('TemplateKeyVault').outputs.keyVault.value]"
     },
     "omsWorkspace": {
       "type": "object",

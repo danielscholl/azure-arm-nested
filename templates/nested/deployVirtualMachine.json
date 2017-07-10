@@ -43,11 +43,11 @@
       "minLength": 1,
       "defaultValue": "azureuser"
     },
-    "adminPassword": {
+    "sshKeyData": {
+      "type": "string",
       "metadata": {
-        "description": "Linux servers admin user account password."
-      },
-      "type": "securestring"
+        "description": "SSH rsa public key file as a string."
+      }
     },
     "ubuntuOSVersion": {
       "metadata": {
@@ -64,8 +64,8 @@
     }
   },
   "variables": {
-    "NicName": "[concat(parameters('vmName'), '-nic')]",
-    "AvailabilitySetName": "[concat(parameters('vmName'), '-as')]"
+    "AvailabilitySetName": "[concat(parameters('vmName'), '-as')]",
+    "sshKeyPath": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]"
   },
   "resources": [
     {
@@ -131,8 +131,18 @@
         },
         "osProfile": {
           "computerName": "[concat('vm', copyIndex())]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
+          "adminUsername": "[parameters('adminUserName')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKeyData')]"
+                }
+              ]
+            }
+          }
         },
         "storageProfile": {
           "imageReference": {
