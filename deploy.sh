@@ -246,7 +246,7 @@ az group deployment create \
   --parameters $(GetParams ${TOKEN}) \
   --query [properties.outputs] -ojsonc
 
-
+exit
 
 ###########################################
 ## Getting Necessary Parameter Templates ##

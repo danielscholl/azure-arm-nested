@@ -38,8 +38,11 @@
     "VNetName": "[concat(parameters('unique'), '-VNet')]",
     "VNetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('VNetName'))]",
     "Subnet1Name": "appTier",
+    "SubNet1Id": "[concat(variables('VNetId'), '/subnets/', variables('Subnet1Name'))]",
     "Subnet2Name": "dataTier",
+    "SubNet2Id": "[concat(variables('VNetId'), '/subnets/', variables('Subnet2Name'))]",
     "Subnet3Name": "dmz",
+    "SubNet3Id": "[concat(variables('VNetId'), '/subnets/', variables('Subnet3Name'))]",
     "Nsg1Name": "[concat(variables('Subnet1Name'), '-nsg')]",
     "Nsg2Name": "[concat(variables('Subnet2Name'), '-nsg')]"
   },
@@ -152,6 +155,14 @@
       "value": {
         "id": "[variables('VNetId')]",
         "name": "[variables('VNetName')]"
+      }
+    },
+    "subnets": {
+      "type": "object",
+      "value": {
+        "subnet1Id": "[variables('subnet1Id')]",
+        "subnet2Id": "[variables('subnet2Id')]",
+        "subnet3Id": "[variables('subnet3Id')]"
       }
     }
   }

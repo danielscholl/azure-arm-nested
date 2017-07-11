@@ -70,6 +70,21 @@
       "metadata": {
         "description": "SSH public key to set on linux VM"
       }
+    },
+    "vmJumpServerName": {
+      "metadata": {
+        "description": "Virtual Machine 1 Server Name."
+      },
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "jumpserver"
+    },
+    "vmJumpServerSize": {
+      "metadata": {
+        "description": "The virtual machine server size."
+      },
+      "type": "string",
+      "defaultValue": "Standard_A1"
     }
   },
   "variables": {},
@@ -162,12 +177,49 @@
           }
         }
       }
+    },
+    {
+      "name": "TemplateJumpServer",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "TemplateKeyVault",
+        "TemplateVNet"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployJumpServer.json'), parameters('sasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "subnetId": {
+            "value": "[reference('TemplateVNet').outputs.subnets.value.subnet3Id]"
+          },
+          "vmName": {
+            "value": "[parameters('vmJumpServerName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmJumpServerSize')]"
+          },
+          "adminUserName": {
+            "value": "[parameters('adminUserName')]"
+          },
+          "publicSSHKeyData": {
+            "value": "[parameters('sshKeyData')]"
+          }
+        }
+      }
     }
   ],
   "outputs": {
     "virtualNetwork": {
       "type": "object",
       "value": "[reference('TemplateVNet').outputs.virtualNetwork.value]"
+    },
+    "subnets": {
+      "type": "object",
+      "value": "[reference('TemplateVNet').outputs.subnets.value]"
     },
     "storageAccount": {
       "type": "object",
