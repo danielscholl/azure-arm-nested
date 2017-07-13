@@ -36,18 +36,25 @@ $ cp templates/*.params.json .params
 >NOTE: To get object id of a user.  az ad user show --upn <your_login_name>
 
 
-4. Create an SSH Key to use if necessary.
+6. Create an SSH Key to use if necessary.
 
 ```bash
 $ mkdir .ssh && cd .ssh
 $ ssh-keygen -t rsa -b 4096 -C "azureuser@email.com" -f id_rsa
 ```
 
-4. Execute deploy.sh and pass a required argument to use as a unique prefix (a-z/A-Z/0-9)
+7. Execute deploy.sh and pass a required argument to use as a unique prefix (a-z/A-Z/0-9)
 
 ```bash
 $ deploy.sh <unique>
 ```
 
+8. To configure the jumpbox server using ansible execute scripts/configure.sh
+
+```bash
+$ scripts/configure.sh <unique>
+```
+
+9. The deploy script will automatically configure the jump server
 ## Architecture
 

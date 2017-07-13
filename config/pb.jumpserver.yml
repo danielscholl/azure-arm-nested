@@ -1,0 +1,6 @@
+---
+- hosts: jumpbox
+  vars:
+    property: value
+  roles:
+    - jumpbox

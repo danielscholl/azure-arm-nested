@@ -1,0 +1,25 @@
+---
+- name: Update and Upgrade apt packages
+  become: yes
+  apt:
+    state: latest
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install System Packages
+  become: yes
+  apt: pkg={{ item }} state=latest update_cache=yes
+  with_items:
+    - ansible
+    - cifs-utils
+
+- name: Copy SSH Keys
+  copy: src={{ item.src }} dest={{ item.dest }} mode=0600
+  with_items:
+    - { src: '../.ssh', dest: '~' }
+
+- name: Setup Ansible
+  copy: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: '.inventory', dest: '~/inventory' }
+    - { src: 'ansible.jb.cfg', dest: '~/ansible.cfg' }
