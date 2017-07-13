@@ -22,5 +22,5 @@ if [ -z $1 ]; then
   usage;
 fi
 
-mkdir .ssh && cd .ssh
+mkdir ../.ssh && cd ../.ssh
 ssh-keygen -t rsa -b 2048 -C $1 -f id_rsa

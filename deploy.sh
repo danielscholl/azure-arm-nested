@@ -215,6 +215,13 @@ az storage blob upload-batch \
   --pattern "*.json" \
   --connection-string ${CONNECTION}
 
+tput setaf 2; echo 'Uploading Custom Scripts to Container...' ; tput sgr0
+az storage blob upload-batch \
+  --source templates \
+  --destination ${CONTAINER} \
+  --pattern "support-scripts/**.*" \
+  --connection-string ${CONNECTION}
+
 tput setaf 2; echo 'Generating a SAS Token for Container...' ; tput sgr0
 TOKEN=$(CreateSASToken ${CONTAINER} ${CONNECTION})
 echo $TOKEN
@@ -246,7 +253,7 @@ az group deployment create \
   --parameters $(GetParams ${TOKEN}) \
   --query [properties.outputs] -ojsonc
 
-exit
+
 
 ###########################################
 ## Getting Necessary Parameter Templates ##

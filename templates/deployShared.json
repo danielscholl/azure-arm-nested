@@ -207,6 +207,9 @@
           },
           "publicSSHKeyData": {
             "value": "[parameters('sshKeyData')]"
+          },
+          "sasToken": {
+            "value": "[parameters('sasToken')]"
           }
         }
       }

@@ -46,6 +46,12 @@
         "15.10",
         "16.04.0-LTS"
       ]
+    },
+    "sasToken": {
+      "type": "string",
+      "metadata": {
+        "description": "SAS Token for Container"
+      }
     }
   },
   "variables": {
@@ -136,7 +142,33 @@
             }
           ]
         }
-      }
+      },
+      "resources": [
+        {
+          "name": "config-ansible",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-06-15",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+          ],
+          "tags": {
+            "displayName": "config-ansible"
+          },
+          "properties": {
+            "publisher": "Microsoft.Azure.Extensions",
+            "type": "CustomScript",
+            "typeHandlerVersion": "2.0",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": [
+                "[concat(uri(deployment().properties.templateLink.uri, '../support-scripts/customScript.sh'), parameters('sasToken'))]"
+              ],
+              "commandToExecute": "[concat('sudo sh customScript.sh')]"
+            }
+          }
+        }
+      ]
     }
   ],
   "outputs": {}
