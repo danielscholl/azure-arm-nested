@@ -8,7 +8,7 @@
     "sasToken": {
       "type": "string"
     },
-    "backendSubnetId": {
+    "subnetId": {
       "type": "string",
       "metadata": {
         "description": "Backend Subnet Id"
@@ -53,7 +53,7 @@
             "value": "[parameters('uniquePrefix')]"
           },
           "subnetId": {
-            "value": "[parameters('backendSubnetId')]"
+            "value": "[parameters('subnetId')]"
           }
         }
       }
@@ -73,7 +73,7 @@
             "value": "[parameters('uniquePrefix')]"
           },
           "subnetId": {
-            "value": "[parameters('backendSubnetId')]"
+            "value": "[parameters('subnetId')]"
           },
           "loadBalancerId": {
             "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value.id]"

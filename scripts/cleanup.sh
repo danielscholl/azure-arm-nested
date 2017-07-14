@@ -35,4 +35,4 @@ CATEGORY=Temp
 RESOURCE_GROUP=${UNIQUE}-${CATEGORY}
 
 tput setaf 2; echo "Removing the $RESOURCE_GROUP resource group..." ; tput sgr0
-az group delete --name ${RESOURCE_GROUP} --no-wait
+az group delete --name ${RESOURCE_GROUP} --no-wait --yes

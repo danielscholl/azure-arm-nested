@@ -10,7 +10,7 @@
     }
   },
   "variables": {
-    "LBName": "[concat(parameters('unique'), '-LB')]",
+    "LBName": "[concat(parameters('unique'), '-lb')]",
     "LBId": "[resourceId('Microsoft.Network/loadBalancers', variables('LBName'))]"
   },
   "resources": [

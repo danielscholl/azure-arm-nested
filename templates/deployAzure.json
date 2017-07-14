@@ -38,24 +38,26 @@
         "description": "Account type, premium vs standard, and local, global redundancy"
       }
     },
-    "omsWorkspaceRegion": {
-      "type": "string",
-      "defaultValue": "West Europe",
-      "allowedValues": [
-        "East US",
-        "West Europe",
-        "Southeast Asia",
-        "Australia Southeast"
-      ],
-      "metadata": {
-        "description": "Specify the region for your Workspace"
-      }
-    },
     "servicePrincipalAppId": {
       "type": "string",
       "metadata": {
         "description": "Service Principal App ID (also called Client ID) that has contributor rights to the subscription used for this deployment. It is used by Spinnaker to dynamically manage resources."
       }
+    },
+    "vmName": {
+      "metadata": {
+        "description": "Virtual Machine server name."
+      },
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "jumpserver"
+    },
+    "vmSize": {
+      "metadata": {
+        "description": "The Virtual Machine server size."
+      },
+      "type": "string",
+      "defaultValue": "Standard_A1"
     },
     "adminUserName": {
       "metadata": {
@@ -70,21 +72,6 @@
       "metadata": {
         "description": "SSH public key to set on linux VM"
       }
-    },
-    "vmJumpServerName": {
-      "metadata": {
-        "description": "Virtual Machine 1 Server Name."
-      },
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "jumpserver"
-    },
-    "vmJumpServerSize": {
-      "metadata": {
-        "description": "The virtual machine server size."
-      },
-      "type": "string",
-      "defaultValue": "Standard_A1"
     }
   },
   "variables": {},
@@ -136,23 +123,6 @@
       }
     },
     {
-      "name": "TemplateOmsWorkspace",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployOmsWorkspace.json'), parameters('sasToken'))]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "omsWorkspaceRegion": {
-            "value": "[parameters('omsWorkspaceRegion')]"
-          }
-        }
-      }
-    },
-    {
       "name": "TemplateKeyVault",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
@@ -197,19 +167,16 @@
             "value": "[reference('TemplateVNet').outputs.subnets.value.subnet3Id]"
           },
           "vmName": {
-            "value": "[parameters('vmJumpServerName')]"
+            "value": "[parameters('vmName')]"
           },
           "vmSize": {
-            "value": "[parameters('vmJumpServerSize')]"
+            "value": "[parameters('vmSize')]"
           },
           "adminUserName": {
             "value": "[parameters('adminUserName')]"
           },
           "publicSSHKeyData": {
             "value": "[parameters('sshKeyData')]"
-          },
-          "sasToken": {
-            "value": "[parameters('sasToken')]"
           }
         }
       }
@@ -231,10 +198,6 @@
     "keyVault": {
       "type": "object",
       "value": "[reference('TemplateKeyVault').outputs.keyVault.value]"
-    },
-    "omsWorkspace": {
-      "type": "object",
-      "value": "[reference('TemplateOmsWorkspace').outputs.omsWorkspace.value]"
     }
   }
 }

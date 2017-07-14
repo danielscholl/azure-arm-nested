@@ -6,12 +6,25 @@
     update_cache: yes
     cache_valid_time: 3600
 
+- name: Register Azure Package Area
+  become: yes
+  shell: |
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ wheezy main" | tee /etc/apt/sources.list.d/azure-cli.list
+    apt-key adv --keyserver packages.microsoft.com --recv-keys 417A0893
+
 - name: Install System Packages
   become: yes
   apt: pkg={{ item }} state=latest update_cache=yes
   with_items:
+    - apt-transport-https
+    - libssl-dev
+    - libffi-dev
+    - build-essential
+    - python-dev
+    - python-pip
     - ansible
     - cifs-utils
+    - azure-cli
 
 - name: Copy SSH Keys
   copy: src={{ item.src }} dest={{ item.dest }} mode=0600

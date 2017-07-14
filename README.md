@@ -43,18 +43,47 @@ $ mkdir .ssh && cd .ssh
 $ ssh-keygen -t rsa -b 4096 -C "azureuser@email.com" -f id_rsa
 ```
 
-7. Execute deploy.sh and pass a required argument to use as a unique prefix (a-z/A-Z/0-9)
+7. Initialize a Temporary Resource Group to hold a Storage Account for hosting private templates. 
 
 ```bash
-$ deploy.sh <unique>
+$ scripts/init.sh <unique>
 ```
 
-8. To configure the jumpbox server using ansible execute scripts/configure.sh
+8. Provision the Shared Resources of a network, key-vault and jumpserver
+
+```bash
+$ scripts/provision.sh <unique>
+```
+
+9. Provision the Data Resources including (n)Virtual Machines in an availability set and a Load Balancer
+
+```bash
+$ scripts/provisionData.sh <unique>
+```
+
+10. Provision the Manage Resource including a OMS WorkSpace with 5 Solutions
+
+```bash
+$ scripts/provisionManage.sh <unique>
+```
+
+11. Configure the JumpStart Server with Ansible to manage Systems using localhost Ansible
 
 ```bash
 $ scripts/configure.sh <unique>
 ```
 
-9. The deploy script will automatically configure the jump server
+12. Connect to the JumpStart Server via ssh
+
+```bash
+$ scripts/connect.sh <unique>
+```
+
+13. Cleanup the Temporary Resource Group
+
+```bash
+$ scripts/cleanup.sh <unique>
+```
+
 ## Architecture
 
