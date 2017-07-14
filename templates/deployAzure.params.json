@@ -17,9 +17,6 @@
     "storageAccountType": {
       "value": "Standard_LRS"
     },
-    "omsWorkspaceRegion": {
-      "value": "East US"
-    },
     "adminUserName": {
       "value": "azureuser"
     },
