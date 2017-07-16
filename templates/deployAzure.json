@@ -32,6 +32,18 @@
         "description": "Subnet 3 CIDR"
       }
     },
+    "subnet4Prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet 4 CIDR"
+      }
+    },
+    "remoteAccessACL": {
+      "type": "string",
+      "metadata": {
+        "description": "Remote Access CIDR"
+      }
+    },
     "storageAccountType": {
       "type": "string",
       "metadata": {
@@ -101,6 +113,12 @@
           },
           "subnet3Prefix": {
             "value": "[parameters('subnet3Prefix')]"
+          },
+          "subnet4Prefix": {
+            "value": "[parameters('subnet4Prefix')]"
+          },
+          "remoteAccessACL": {
+            "value": "[parameters('remoteAccessACL')]"
           }
         }
       }
@@ -164,7 +182,10 @@
         },
         "parameters": {
           "subnetId": {
-            "value": "[reference('TemplateVNet').outputs.subnets.value.subnet3Id]"
+            "value": "[reference('TemplateVNet').outputs.subnets.value.subnet4Id]"
+          },
+          "nsgId": {
+            "value": "[reference('TemplateVNet').outputs.securityGroups.value.remoteAccessId]"
           },
           "vmName": {
             "value": "[parameters('vmName')]"
@@ -190,6 +211,10 @@
     "subnets": {
       "type": "object",
       "value": "[reference('TemplateVNet').outputs.subnets.value]"
+    },
+    "securityGroups": {
+      "type": "object",
+      "value": "[reference('TemplateVNet').outputs.securityGroups.value]"
     },
     "storageAccount": {
       "type": "object",

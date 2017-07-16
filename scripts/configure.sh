@@ -48,10 +48,10 @@ EOF1
 
 
 cat > config/.inventory << EOF1
-[datatier]
-$(az vm list-ip-addresses -g ${UNIQUE}-Data  --query [].virtualMachine.network.privateIpAddresses -otsv)
+[back]
+$(az vm list-ip-addresses -g ${UNIQUE}-Back  --query [].virtualMachine.network.privateIpAddresses -otsv)
 
-[apptier]
+[front]
 EOF1
 
 ansible-playbook -i config/inventory ./config/pb.jumpserver.yml

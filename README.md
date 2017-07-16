@@ -87,3 +87,8 @@ $ scripts/cleanup.sh <unique>
 
 ## Architecture
 
+![[0]][0]
+
+[0]: ./media/Architecturepng "Architecture Diagram"
+
+

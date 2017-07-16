@@ -67,33 +67,25 @@ echo $TOKEN
 #################################
 ## Resource Group and Template ##
 #################################
-CATEGORY=Data
+CATEGORY=Monitor
 RESOURCE_GROUP=${UNIQUE}-${CATEGORY}
 
 tput setaf 2; echo "Creating the $RESOURCE_GROUP resource group..." ; tput sgr0
 CreateResourceGroup ${RESOURCE_GROUP} ${AZURE_LOCATION};
 
-# Deploy DataTier
-TEMPLATE='deployData'
+
+# Deploy OMS
+TEMPLATE='nested/deployOmsWorkspace'
 tput setaf 2; echo "Getting the URL for ${TEMPLATE}..." ; tput sgr0
 URL=$(GetUrl ${TEMPLATE} ${TOKEN} ${AZURE_STORAGE_CONTAINER} ${CONNECTION})
 echo $URL
 
-tput setaf 2; echo 'Getting Required Parameters...' ; tput sgr0
-SUBNET=$(az network vnet subnet show --name dataTier \
-  --resource-group ${UNIQUE} \
-  --vnet-name ${UNIQUE}-vnet \
-  --query id -otsv)
-KEYVAULT=$(az keyvault show --name ${UNIQUE}-kv \
-  --query id -otsv)
-
-tput setaf 2; echo "Deploying ${CATEGORY} Template..." ; tput sgr0
+tput setaf 2; echo "Deploying Template ${TEMPLATE}..." ; tput sgr0
 az group deployment create \
   --resource-group ${RESOURCE_GROUP} \
   --template-uri ${URL} \
-  --parameters @.params/deploy${CATEGORY}.params.json \
-  --parameters uniquePrefix=${UNIQUE} sasToken=?$TOKEN \
-  --parameters keyVaultId=${KEYVAULT} subnetId=${SUBNET} \
   --query [properties.outputs] -ojsonc
+
+
 
 

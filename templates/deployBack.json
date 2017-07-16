@@ -69,9 +69,6 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "unique": {
-            "value": "[parameters('uniquePrefix')]"
-          },
           "subnetId": {
             "value": "[parameters('subnetId')]"
           },

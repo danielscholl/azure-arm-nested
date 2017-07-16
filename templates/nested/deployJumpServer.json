@@ -3,6 +3,15 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "subnetId": {
+      "metadata": {
+        "description": "Subnet ID to associate VM to."
+      },
+      "type": "string"
+    },
+    "nsgId": {
+      "metadata": {
+        "description": "Network Security Group allowing Remote Access"
+      },
       "type": "string"
     },
     "vmName": {
@@ -55,13 +64,13 @@
   },
   "resources": [
     {
-      "comments": "## Public IP Address##",
+      "comments": "## Public IP Address ##",
       "name": "[variables('PublicIpName')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
       "tags": {
-        "displayName": "[variables('PublicIpName')]"
+        "displayName": "Public IP Address - JumpServer"
       },
       "properties": {
         "publicIPAllocationMethod": "Dynamic"
@@ -71,29 +80,32 @@
       "comments": "## Network Interface ##",
       "name": "[variables('NicName')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Network Interface - JumpServer"
+      },
       "dependsOn": [
         "[resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIpName'))]"
       ],
-      "tags": {
-        "displayName": "Network Interface JumpServer"
-      },
       "properties": {
         "ipConfigurations": [
           {
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
-              "subnet": {
-                "id": "[parameters('subnetId')]"
-              },
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPName'))]"
+              },
+              "subnet": {
+                "id": "[parameters('subnetId')]"
               }
             }
           }
-        ]
+        ],
+        "networkSecurityGroup": {
+          "id": "[parameters('nsgId')]"
+        }
       }
     },
     {
@@ -102,6 +114,9 @@
       "name": "[parameters('vmName')]",
       "apiVersion": "2016-04-30-preview",
       "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Virtual Machine - JumpServer"
+      },
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces', variables('NicName'))]"
       ],
