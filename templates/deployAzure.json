@@ -51,28 +51,28 @@
       },
       "defaultValue": "10.1.0.0/24"
     },
-    "subnet1Prefix": {
+    "frontendPrefix": {
       "type": "string",
       "metadata": {
         "description": "Subnet 1 Address Prefix (CIDR)"
       },
       "defaultValue": "10.1.0.0/25"
     },
-    "subnet2Prefix": {
+    "backendPrefix": {
       "type": "string",
       "metadata": {
         "description": "Subnet 2 Address Prefix (CIDR)"
       },
       "defaultValue": "10.1.0.128/26"
     },
-    "subnet3Prefix": {
+    "dmzPrefix": {
       "type": "string",
       "metadata": {
         "description": "Subnet 3 Address Prefix (CIDR)"
       },
       "defaultValue": "10.1.0.192/28"
     },
-    "subnet4Prefix": {
+    "managePrefix": {
       "type": "string",
       "metadata": {
         "description": "Subnet 4 Address Prefix (CIDR)"
@@ -122,16 +122,16 @@
             "value": "[parameters('vnetPrefix')]"
           },
           "subnet1Prefix": {
-            "value": "[parameters('subnet1Prefix')]"
+            "value": "[parameters('frontendPrefix')]"
           },
           "subnet2Prefix": {
-            "value": "[parameters('subnet2Prefix')]"
+            "value": "[parameters('backendPrefix')]"
           },
           "subnet3Prefix": {
-            "value": "[parameters('subnet3Prefix')]"
+            "value": "[parameters('dmzPrefix')]"
           },
           "subnet4Prefix": {
-            "value": "[parameters('subnet4Prefix')]"
+            "value": "[parameters('managePrefix')]"
           },
           "remoteAccessACL": {
             "value": "[parameters('remoteAccessACL')]"
