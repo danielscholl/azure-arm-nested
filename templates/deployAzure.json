@@ -13,13 +13,7 @@
     "servicePrincipalAppId": {
       "type": "string",
       "metadata": {
-        "description": "User/App ObjectId.  (az ad user show --upn user@email.com)"
-      }
-    },
-    "jumpserverSSHKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Admin user public ssh key."
+        "description": "ObjectId for User allowed KeyVault Secret Access. (az ad user show --upn user@email.com)"
       }
     },
     "jumpserverUser": {
@@ -27,10 +21,15 @@
       "metadata": {
         "description": "Admin user account name."
       },
-      "defaultValue": "azureuser",
-      "minLength": 1
+      "minLength": 3
     },
-    "jumpVmName": {
+    "jumpserverSSHKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Admin user public ssh key."
+      }
+    },
+    "jumpserverName": {
       "type": "string",
       "metadata": {
         "description": "Server name."
@@ -38,7 +37,7 @@
       "defaultValue": "jumpserver",
       "minLength": 2
     },
-    "jumpVmSize": {
+    "jumpserverSize": {
       "type": "string",
       "metadata": {
         "description": "Server size."
@@ -86,6 +85,21 @@
         "description": "Allow SSH Remote Access IP (CIDR)"
       },
       "defaultValue": "Internet"
+    },
+    "vmName": {
+      "metadata": {
+        "description": "Backend Virtual Machine Name."
+      },
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "db"
+    },
+    "vmSize": {
+      "metadata": {
+        "description": "Backend Virtual Machine Size."
+      },
+      "type": "string",
+      "defaultValue": "Standard_DS1_v2"
     }
   },
   "variables": {},
@@ -190,16 +204,91 @@
             "value": "[reference('TemplateVNet').outputs.securityGroups.value.remoteAccessId]"
           },
           "vmName": {
-            "value": "[parameters('jumpVmName')]"
+            "value": "[parameters('jumpserverName')]"
           },
           "vmSize": {
-            "value": "[parameters('jumpVmSize')]"
+            "value": "[parameters('jumpserverSize')]"
           },
           "adminUserName": {
             "value": "[parameters('jumpserverUser')]"
           },
           "publicSSHKeyData": {
             "value": "[parameters('jumpserverSSHKey')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "TemplateOMS",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployOmsWorkspace.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {}
+      }
+    },
+    {
+      "name": "TemplateLoadBalancer",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployLoadBalancer.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "unique": {
+            "value": "[parameters('uniquePrefix')]"
+          },
+          "subnetId": {
+            "value": "[reference('TemplateVNet').outputs.subnets.value.subnet3Id]"
+          }
+        }
+      }
+    },
+    {
+      "name": "TemplateVirtualMachine",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployVirtualMachine.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "subnetId": {
+            "value": "[reference('TemplateVNet').outputs.subnets.value.subnet2Id]"
+          },
+          "loadBalancerId": {
+            "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value.id]"
+          },
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          },
+          "adminUserName": {
+            "reference": {
+              "keyVault": {
+                "id": "[reference('TemplateKeyVault').outputs.keyVault.value.id]"
+              },
+              "secretName": "adminUserName"
+            }
+          },
+          "sshKeyData": {
+            "reference": {
+              "keyVault": {
+                "id": "[reference('TemplateKeyVault').outputs.keyVault.value.id]"
+              },
+              "secretName": "sshPublicKey"
+            }
           }
         }
       }
