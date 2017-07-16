@@ -7,68 +7,33 @@
       "minLength": 2,
       "maxLength": 5,
       "metadata": {
-        "description": "Small Unique string (2-5) charachters"
+        "description": "Small unique string."
       }
     },
     "servicePrincipalAppId": {
       "type": "string",
       "metadata": {
-        "description": "Service Principal App ID.  (az ad user show --upn <login>)"
+        "description": "User/App ObjectId.  (az ad user show --upn user@email.com)"
       }
     },
-    "vnetPrefix": {
-      "type": "string",
+    "jumpserverSSHKey": {
+      "type": "securestring",
       "metadata": {
-        "description": "Virtual Network Address Prefix CIDR"
-      },
-      "defaultValue": "10.1.0.0/24"
+        "description": "Admin user public ssh key."
+      }
     },
-    "subnet1Prefix": {
+    "jumpserverUser": {
       "type": "string",
       "metadata": {
-        "description": "Subnet 1 Address Prefix CIDR"
-      },
-      "defaultValue": "10.1.0.0/25"
-    },
-    "subnet2Prefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Subnet 2 Address Prefix CIDR"
-      },
-      "defaultValue": "10.1.0.128/26"
-    },
-    "subnet3Prefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Subnet 3 Prefix CIDR"
-      },
-      "defaultValue": "10.1.0.192/28"
-    },
-    "subnet4Prefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Subnet 4 CIDR"
-      },
-      "defaultValue": "10.1.0.208/28"
-    },
-    "jumpAdminUser": {
-      "type": "string",
-      "metadata": {
-        "description": "Linux servers admin user account name."
+        "description": "Admin user account name."
       },
       "defaultValue": "azureuser",
       "minLength": 1
     },
-    "jumpAdminSSHKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Linux servers admin public ssh key."
-      }
-    },
     "jumpVmName": {
       "type": "string",
       "metadata": {
-        "description": "Virtual Machine server name."
+        "description": "Server name."
       },
       "defaultValue": "jumpserver",
       "minLength": 2
@@ -76,14 +41,49 @@
     "jumpVmSize": {
       "type": "string",
       "metadata": {
-        "description": "The Virtual Machine server size."
+        "description": "Server size."
       },
       "defaultValue": "Standard_A1"
+    },
+    "vnetPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network Address Prefix (CIDR)"
+      },
+      "defaultValue": "10.1.0.0/24"
+    },
+    "subnet1Prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet 1 Address Prefix (CIDR)"
+      },
+      "defaultValue": "10.1.0.0/25"
+    },
+    "subnet2Prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet 2 Address Prefix (CIDR)"
+      },
+      "defaultValue": "10.1.0.128/26"
+    },
+    "subnet3Prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet 3 Address Prefix (CIDR)"
+      },
+      "defaultValue": "10.1.0.192/28"
+    },
+    "subnet4Prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet 4 Address Prefix (CIDR)"
+      },
+      "defaultValue": "10.1.0.208/28"
     },
     "remoteAccessACL": {
       "type": "string",
       "metadata": {
-        "description": "Remote Access CIDR"
+        "description": "Allow SSH Remote Access IP (CIDR)"
       },
       "defaultValue": "Internet"
     }
@@ -160,10 +160,10 @@
             "value": "[parameters('servicePrincipalAppId')]"
           },
           "adminUserName": {
-            "value": "[parameters('jumpAdminUser')]"
+            "value": "[parameters('jumpserverUser')]"
           },
           "publicSSHKeyData": {
-            "value": "[parameters('jumpVmAdminKey')]"
+            "value": "[parameters('jumpserverSSHKey')]"
           }
         }
       }
@@ -196,10 +196,10 @@
             "value": "[parameters('jumpVmSize')]"
           },
           "adminUserName": {
-            "value": "[parameters('jumpAdminUser')]"
+            "value": "[parameters('jumpserverUser')]"
           },
           "publicSSHKeyData": {
-            "value": "[parameters('jumpAdminSSHKey')]"
+            "value": "[parameters('jumpserverSSHKey')]"
           }
         }
       }
