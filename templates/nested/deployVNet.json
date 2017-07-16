@@ -7,45 +7,45 @@
     },
     "vnetPrefix": {
       "type": "string",
-      "defaultValue": "10.1.0.0/24",
       "metadata": {
-        "description": "Virtual Network CIDR Address Space"
-      }
+        "description": "Virtual Network Address Prefix CIDR"
+      },
+      "defaultValue": "10.1.0.0/24"
     },
     "subnet1Prefix": {
       "type": "string",
-      "defaultValue": "10.1.0.0/25",
       "metadata": {
-        "description": "Subnet 1 CIDR"
-      }
+        "description": "Subnet 1 Address Prefix CIDR"
+      },
+      "defaultValue": "10.1.0.0/25"
     },
     "subnet2Prefix": {
       "type": "string",
-      "defaultValue": "10.1.0.128/26",
       "metadata": {
-        "description": "Subnet 2 CIDR"
-      }
+        "description": "Subnet 2 Address Prefix CIDR"
+      },
+      "defaultValue": "10.1.0.128/26"
     },
     "subnet3Prefix": {
       "type": "string",
-      "defaultValue": "10.1.0.192/28",
       "metadata": {
-        "description": "Subnet 3 CIDR"
-      }
+        "description": "Subnet 3 Prefix CIDR"
+      },
+      "defaultValue": "10.1.0.192/28"
     },
     "subnet4Prefix": {
       "type": "string",
-      "defaultValue": "10.1.0.208/28",
       "metadata": {
         "description": "Subnet 4 CIDR"
-      }
+      },
+      "defaultValue": "10.1.0.208/28"
     },
     "remoteAccessACL": {
       "type": "string",
-      "defaultValue": "Internet",
       "metadata": {
         "description": "Remote Access CIDR"
-      }
+      },
+      "defaultValue": "Internet"
     }
   },
   "variables": {

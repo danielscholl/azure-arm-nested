@@ -4,15 +4,15 @@
   "parameters": {
     "storageAccountType": {
       "type": "string",
+      "metadata": {
+        "description": "Account type, premium vs standard, and local, global redundancy"
+      },
       "defaultValue": "Standard_LRS",
       "allowedValues": [
         "Standard_LRS",
         "Standard_GRS",
         "Premium_LRS"
-      ],
-      "metadata": {
-        "description": "Account type, premium vs standard, and local, global redundancy"
-      }
+      ]
     }
   },
   "variables": {

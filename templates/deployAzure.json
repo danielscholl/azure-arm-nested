@@ -3,86 +3,100 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "uniquePrefix": {
-      "type": "string"
-    },
-    "sasToken": {
-      "type": "string"
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 5,
+      "metadata": {
+        "description": "Small Unique string (2-5) charachters"
+      }
     },
     "vnetPrefix": {
       "type": "string",
       "metadata": {
-        "description": "Virtual Network CIDR Address Space"
-      }
+        "description": "Virtual Network Address Prefix CIDR"
+      },
+      "defaultValue": "10.1.0.0/24"
     },
     "subnet1Prefix": {
       "type": "string",
       "metadata": {
-        "description": "Subnet 1 CIDR"
-      }
+        "description": "Subnet 1 Address Prefix CIDR"
+      },
+      "defaultValue": "10.1.0.0/25"
     },
     "subnet2Prefix": {
       "type": "string",
       "metadata": {
-        "description": "Subnet 2 CIDR"
-      }
+        "description": "Subnet 2 Address Prefix CIDR"
+      },
+      "defaultValue": "10.1.0.128/26"
     },
     "subnet3Prefix": {
       "type": "string",
       "metadata": {
-        "description": "Subnet 3 CIDR"
-      }
+        "description": "Subnet 3 Prefix CIDR"
+      },
+      "defaultValue": "10.1.0.192/28"
     },
     "subnet4Prefix": {
       "type": "string",
       "metadata": {
         "description": "Subnet 4 CIDR"
-      }
+      },
+      "defaultValue": "10.1.0.208/28"
     },
     "remoteAccessACL": {
       "type": "string",
       "metadata": {
         "description": "Remote Access CIDR"
-      }
+      },
+      "defaultValue": "Internet"
     },
     "storageAccountType": {
       "type": "string",
       "metadata": {
         "description": "Account type, premium vs standard, and local, global redundancy"
-      }
+      },
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Premium_LRS"
+      ]
     },
     "servicePrincipalAppId": {
       "type": "string",
       "metadata": {
-        "description": "Service Principal App ID (also called Client ID) that has contributor rights to the subscription used for this deployment. It is used by Spinnaker to dynamically manage resources."
+        "description": "Service Principal App ID.  (az ad user show --upn <login>)"
       }
     },
     "vmName": {
+      "type": "string",
       "metadata": {
         "description": "Virtual Machine server name."
       },
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "jumpserver"
+      "defaultValue": "jumpserver",
+      "minLength": 2
     },
     "vmSize": {
+      "type": "string",
       "metadata": {
         "description": "The Virtual Machine server size."
       },
-      "type": "string",
       "defaultValue": "Standard_A1"
     },
     "adminUserName": {
+      "type": "string",
       "metadata": {
         "description": "Linux servers admin user account name."
       },
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "azureuser"
+      "defaultValue": "azureuser",
+      "minLength": 1
     },
     "sshKeyData": {
       "type": "securestring",
       "metadata": {
-        "description": "SSH public key to set on linux VM"
+        "description": "Linux servers admin public ssh key."
       }
     }
   },
@@ -95,7 +109,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates', 'nested/deployVNet.json', parameters('sasToken'))]",
+          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates', 'nested/deployVNet.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -130,7 +144,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployStorageAccount.json', parameters('sasToken'))]",
+          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployStorageAccount.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -147,7 +161,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployKeyVault.json', parameters('sasToken'))]",
+          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployKeyVault.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -177,7 +191,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployJumpServer.json', parameters('sasToken'))]",
+          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployJumpServer.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
