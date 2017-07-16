@@ -89,6 +89,6 @@ $ scripts/cleanup.sh <unique>
 
 ![[0]][0]
 
-[0]: ./media/Architecturepng "Architecture Diagram"
+[0]: ./media/Architecture.png "Architecture Diagram"
 
 
