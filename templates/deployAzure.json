@@ -10,6 +10,12 @@
         "description": "Small Unique string (2-5) charachters"
       }
     },
+    "servicePrincipalAppId": {
+      "type": "string",
+      "metadata": {
+        "description": "Service Principal App ID.  (az ad user show --upn <login>)"
+      }
+    },
     "vnetPrefix": {
       "type": "string",
       "metadata": {
@@ -45,47 +51,7 @@
       },
       "defaultValue": "10.1.0.208/28"
     },
-    "remoteAccessACL": {
-      "type": "string",
-      "metadata": {
-        "description": "Remote Access CIDR"
-      },
-      "defaultValue": "Internet"
-    },
-    "storageAccountType": {
-      "type": "string",
-      "metadata": {
-        "description": "Account type, premium vs standard, and local, global redundancy"
-      },
-      "defaultValue": "Standard_LRS",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_GRS",
-        "Premium_LRS"
-      ]
-    },
-    "servicePrincipalAppId": {
-      "type": "string",
-      "metadata": {
-        "description": "Service Principal App ID.  (az ad user show --upn <login>)"
-      }
-    },
-    "vmName": {
-      "type": "string",
-      "metadata": {
-        "description": "Virtual Machine server name."
-      },
-      "defaultValue": "jumpserver",
-      "minLength": 2
-    },
-    "vmSize": {
-      "type": "string",
-      "metadata": {
-        "description": "The Virtual Machine server size."
-      },
-      "defaultValue": "Standard_A1"
-    },
-    "adminUserName": {
+    "jumpAdminUser": {
       "type": "string",
       "metadata": {
         "description": "Linux servers admin user account name."
@@ -93,11 +59,33 @@
       "defaultValue": "azureuser",
       "minLength": 1
     },
-    "sshKeyData": {
+    "jumpAdminSSHKey": {
       "type": "securestring",
       "metadata": {
         "description": "Linux servers admin public ssh key."
       }
+    },
+    "jumpVmName": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Machine server name."
+      },
+      "defaultValue": "jumpserver",
+      "minLength": 2
+    },
+    "jumpVmSize": {
+      "type": "string",
+      "metadata": {
+        "description": "The Virtual Machine server size."
+      },
+      "defaultValue": "Standard_A1"
+    },
+    "remoteAccessACL": {
+      "type": "string",
+      "metadata": {
+        "description": "Remote Access CIDR"
+      },
+      "defaultValue": "Internet"
     }
   },
   "variables": {},
@@ -149,7 +137,7 @@
         },
         "parameters": {
           "storageAccountType": {
-            "value": "[parameters('storageAccountType')]"
+            "value": "Standard_LRS"
           }
         }
       }
@@ -172,10 +160,10 @@
             "value": "[parameters('servicePrincipalAppId')]"
           },
           "adminUserName": {
-            "value": "[parameters('adminUserName')]"
+            "value": "[parameters('jumpAdminUser')]"
           },
           "publicSSHKeyData": {
-            "value": "[parameters('sshKeyData')]"
+            "value": "[parameters('jumpVmAdminKey')]"
           }
         }
       }
@@ -202,16 +190,16 @@
             "value": "[reference('TemplateVNet').outputs.securityGroups.value.remoteAccessId]"
           },
           "vmName": {
-            "value": "[parameters('vmName')]"
+            "value": "[parameters('jumpVmName')]"
           },
           "vmSize": {
-            "value": "[parameters('vmSize')]"
+            "value": "[parameters('jumpVmSize')]"
           },
           "adminUserName": {
-            "value": "[parameters('adminUserName')]"
+            "value": "[parameters('jumpAdminUser')]"
           },
           "publicSSHKeyData": {
-            "value": "[parameters('sshKeyData')]"
+            "value": "[parameters('jumpAdminSSHKey')]"
           }
         }
       }
