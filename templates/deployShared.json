@@ -95,7 +95,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates', 'nested/deployVNet.json', parameters('sasToken'))]",
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployVNet.json'), parameters('sasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -130,7 +130,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployStorageAccount.json', parameters('sasToken'))]",
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployStorageAccount.json'), parameters('sasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -147,7 +147,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployKeyVault.json', parameters('sasToken'))]",
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployKeyVault.json'), parameters('sasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -177,7 +177,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployJumpServer.json', parameters('sasToken'))]",
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployJumpServer.json'), parameters('sasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {

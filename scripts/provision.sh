@@ -75,7 +75,7 @@ CreateResourceGroup ${RESOURCE_GROUP} ${AZURE_LOCATION};
 
 
 # Deploy Common Network and Storage
-TEMPLATE='deployAzure'
+TEMPLATE='deployShared'
 tput setaf 2; echo "Getting the URL for ${TEMPLATE}..." ; tput sgr0
 URL=$(GetUrl ${TEMPLATE} ${TOKEN} ${AZURE_STORAGE_CONTAINER} ${CONNECTION})
 echo $URL
@@ -93,49 +93,6 @@ tput setaf 2; echo "Deploying Template ${TEMPLATE}..." ; tput sgr0
 az group deployment create \
   --resource-group ${RESOURCE_GROUP} \
   --template-uri ${URL} \
-  --parameters @.params/deployAzure.params.json \
+  --parameters @.params/deployShared.params.json \
   --parameters $(GetParams ${TOKEN}) \
   --query [properties.outputs] -ojsonc
-
-
-# Deploy OMS
-# TEMPLATE='nested/deployOmsWorkspace'
-# tput setaf 2; echo "Getting the URL for ${TEMPLATE}..." ; tput sgr0
-# URL=$(GetUrl ${TEMPLATE} ${TOKEN} ${AZURE_STORAGE_CONTAINER} ${CONNECTION})
-# echo $URL
-
-# tput setaf 2; echo "Deploying Template ${TEMPLATE}..." ; tput sgr0
-# az group deployment create \
-#   --resource-group ${RESOURCE_GROUP} \
-#   --template-uri ${URL} \
-#   --query [properties.outputs] -ojsonc
-
-
-# Deploy JumpServer
-# TEMPLATE='nested/deployJumpServer'
-# tput setaf 2; echo "Getting the URL for ${TEMPLATE}..." ; tput sgr0
-# URL=$(GetUrl ${TEMPLATE} ${TOKEN} ${AZURE_STORAGE_CONTAINER} ${CONNECTION})
-# echo $URL
-
-# tput setaf 2; echo 'Getting Required Parameters...' ; tput sgr0
-# SUBNET=$(az network vnet subnet show --name dataTier \
-#   --resource-group ${RESOURCE_GROUP} \
-#   --vnet-name ${UNIQUE}-vnet \
-#   --query id -otsv)
-# KEYVAULT=$(az keyvault show --name ${UNIQUE}-kv \
-#   --query id -otsv)
-
-
-# CUSTOMSCRIPT='../support-scripts/customScript.sh'
-# COMMAND='sudo sh customScript.sh'
-
-# publicSSHKeyData
-
-# tput setaf 2; echo "Deploying Template ${TEMPLATE}..." ; tput sgr0
-# az group deployment create \
-#   --resource-group ${RESOURCE_GROUP} \
-#   --template-uri ${URL} \
-#   --parameters subnetId=${SUBNET} keyVaultId="${KEYVAULT}" \
-#   --parameters sasToken=?${TOKEN} \
-#   --query [properties.outputs] -ojsonc
-
