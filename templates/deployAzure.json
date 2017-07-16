@@ -86,7 +86,7 @@
       },
       "defaultValue": "Internet"
     },
-    "vmName": {
+    "backendServerNamePrefix": {
       "metadata": {
         "description": "Backend Virtual Machine Name."
       },
@@ -94,7 +94,7 @@
       "minLength": 1,
       "defaultValue": "db"
     },
-    "vmSize": {
+    "backendServerSize": {
       "metadata": {
         "description": "Backend Virtual Machine Size."
       },
@@ -269,10 +269,10 @@
             "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value.id]"
           },
           "vmName": {
-            "value": "[parameters('vmName')]"
+            "value": "[parameters('backendServerNamePrefix')]"
           },
           "vmSize": {
-            "value": "[parameters('vmSize')]"
+            "value": "[parameters('backendServerSize')]"
           },
           "adminUserName": {
             "reference": {
