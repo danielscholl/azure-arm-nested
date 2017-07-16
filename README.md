@@ -55,16 +55,16 @@ $ scripts/init.sh <unique>
 $ scripts/provision.sh <unique>
 ```
 
-9. Provision the Data Resources including (n)Virtual Machines in an availability set and a Load Balancer
+9. Provision the Backend Resources including (n)Virtual Machines in an availability set and a Load Balancer
 
 ```bash
-$ scripts/provisionData.sh <unique>
+$ scripts/provisionBack.sh <unique>
 ```
 
-10. Provision the Manage Resource including a OMS WorkSpace with 5 Solutions
+10. Provision the Monitor Resource including a OMS WorkSpace with 5 Solutions
 
 ```bash
-$ scripts/provisionManage.sh <unique>
+$ scripts/provisionMonitor.sh <unique>
 ```
 
 11. Configure the JumpStart Server with Ansible to manage Systems using localhost Ansible
