@@ -43,6 +43,9 @@
     },
     "backendServerSize": {
       "value": "Standard_DS1_v2"
+    },
+    "scaleSetInstanceCount": {
+      "value": 2
     }
   }
 }

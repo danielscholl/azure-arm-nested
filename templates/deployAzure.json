@@ -100,6 +100,21 @@
       },
       "type": "string",
       "defaultValue": "Standard_DS1_v2"
+    },
+    "scaleSetServerSize": {
+      "metadata": {
+        "description": "Virtual Machine ScaleSet Size."
+      },
+      "type": "string",
+      "defaultValue": "Standard_DS1_v2"
+    },
+    "scaleSetInstanceCount": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of instances to deploy in the Scale Set."
+      },
+      "defaultValue": 2,
+      "minValue": 2
     }
   },
   "variables": {},
@@ -289,6 +304,71 @@
               },
               "secretName": "sshPublicKey"
             }
+          }
+        }
+      }
+    },
+    {
+      "name": "TemplateAppGateway",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployAppGateway.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "unique": {
+            "value": "[parameters('unique')]"
+          },
+          "subnetId": {
+            "value": "[reference('TemplateVNet').outputs.subnets.value.subnet4Id]"
+          }
+        }
+      }
+    },
+    {
+      "name": "TemplateVMScaleSet",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat('https://raw.githubusercontent.com/danielscholl/azure-arm-nested/master/templates/nested/', 'deployVMScaleSet.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "unique": {
+            "value": "[parameters('unique')]"
+          },
+          "subnetId": {
+            "value": "[reference('TemplateVNet').outputs.subnets.value.subnet1Id]"
+          },
+          "bePoolId": {
+            "value": "[reference('TemplateAppGateway').outputs.appGateway.value.bePoolId]"
+          },
+          "adminUserName": {
+            "reference": {
+              "keyVault": {
+                "id": "[reference('TemplateKeyVault').outputs.keyVault.value.id]"
+              },
+              "secretName": "adminUserName"
+            }
+          },
+          "sshKeyData": {
+            "reference": {
+              "keyVault": {
+                "id": "[reference('TemplateKeyVault').outputs.keyVault.value.id]"
+              },
+              "secretName": "sshPublicKey"
+            }
+          },
+          "vmSize": {
+            "value": "[parameters('scaleSetServerSize')]"
+          },
+          "instanceCount": {
+            "value": "[parameters('scaleSetInstanceCount')]"
           }
         }
       }
