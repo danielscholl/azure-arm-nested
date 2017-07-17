@@ -3,7 +3,7 @@
 #
 #  Purpose: Create the Common Resource Group and Deploy the Common Template
 #  Usage:
-#    provisionShared.sh <unique>
+#    provisionBack.sh <unique>
 
 #set -euo pipefail
 #IFS=$'\n\t'
@@ -16,7 +16,7 @@
 ###############################
 ## ARGUMENT INPUT            ##
 ###############################
-usage() { echo "Usage: provisionShared.sh <unique>" 1>&2; exit 1; }
+usage() { echo "Usage: provisionBack.sh <unique>" 1>&2; exit 1; }
 
 if [ -f ~/.azure/.env ]; then source ~/.azure/.env; fi
 if [ -f ./.env ]; then source ./.env; fi
@@ -73,7 +73,7 @@ RESOURCE_GROUP=${UNIQUE}-${CATEGORY}
 tput setaf 2; echo "Creating the $RESOURCE_GROUP resource group..." ; tput sgr0
 CreateResourceGroup ${RESOURCE_GROUP} ${AZURE_LOCATION};
 
-# Deploy Bacl
+# Deploy Back
 TEMPLATE='deployBack'
 tput setaf 2; echo "Getting the URL for ${TEMPLATE}..." ; tput sgr0
 URL=$(GetUrl ${TEMPLATE} ${TOKEN} ${AZURE_STORAGE_CONTAINER} ${CONNECTION})

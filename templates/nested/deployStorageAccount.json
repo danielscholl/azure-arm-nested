@@ -22,8 +22,9 @@
   },
   "resources": [
     {
-      "type": "Microsoft.Storage/storageAccounts",
+      "comments": "## Storage Account ##",
       "name": "[variables('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2016-01-01",
       "location": "[resourceGroup().location]",
       "tags": {

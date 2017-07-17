@@ -3,10 +3,16 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "unique": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Small unique string."
+      }
     },
     "subnetId": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Subnet ID to associate VM to."
+      }
     }
   },
   "variables": {
@@ -18,8 +24,8 @@
       "comments": "## Load Balancer ##",
       "name": "[variables('LBName')]",
       "type": "Microsoft.Network/loadBalancers",
-      "location": "[resourceGroup().location]",
       "apiVersion": "2015-05-01-preview",
+      "location": "[resourceGroup().location]",
       "dependsOn": [],
       "tags": {
         "displayName": "Internal Load Balancer"

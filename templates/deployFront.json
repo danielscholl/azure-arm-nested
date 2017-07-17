@@ -1,0 +1,143 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "unique": {
+      "type": "string",
+      "metadata": {
+        "description": "Small unique string."
+      },
+      "minLength": 2,
+      "maxLength": 5
+    },
+    "sasToken": {
+      "type": "string",
+      "metadata": {
+        "description": "Storage Container SAS Token for retrieving Template Blobs."
+      }
+    },
+    "subnetIdDMZ": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet ID to associate LB to."
+      }
+    },
+    "subnetIdFront": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet ID to associate LB to."
+      }
+    },
+    "keyVaultId": {
+      "type": "string",
+      "metadata": {
+        "description": "KeyVault Id"
+      }
+    },
+    "instanceCount": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of instances to deploy in the Scale Set."
+      },
+      "defaultValue": 2,
+      "minValue": 2
+    },
+    "vmSize": {
+      "type": "string",
+      "metadata": {
+        "description": "The virtual machine server size."
+      },
+      "defaultValue": "Standard_A1"
+    },
+    "ubuntuOSVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version."
+      },
+      "defaultValue": "16.04.0-LTS",
+      "allowedValues": [
+        "12.04.5-LTS",
+        "14.04.5-LTS",
+        "15.10",
+        "16.04.0-LTS"
+      ]
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "TemplateAppGateway",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployAppGateway.json'), parameters('sasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "unique": {
+            "value": "[parameters('unique')]"
+          },
+          "subnetId": {
+            "value": "[parameters('subnetIdDMZ')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "TemplateVMScaleSet",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/deployVMScaleSet.json'), parameters('sasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "unique": {
+            "value": "[parameters('unique')]"
+          },
+          "subnetId": {
+            "value": "[parameters('subnetIdFront')]"
+          },
+          "bePoolId": {
+            "value": "[reference('TemplateAppGateway').outputs.appGateway.value.bePoolId]"
+          },
+          "adminUserName": {
+            "reference": {
+              "keyVault": {
+                "id": "[parameters('keyVaultId')]"
+              },
+              "secretName": "adminUserName"
+            }
+          },
+          "sshKeyData": {
+            "reference": {
+              "keyVault": {
+                "id": "[parameters('keyVaultId')]"
+              },
+              "secretName": "sshPublicKey"
+            }
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
+          },
+          "instanceCount": {
+            "value": "[parameters('instanceCount')]"
+          },
+          "ubuntuOSVersion": {
+            "value": "[parameters('ubuntuOSVersion')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "loadBalancer": {
+      "type": "object",
+      "value": "[reference('TemplateAppGateway').outputs.appGateway.value]"
+    }
+  }
+}

@@ -3,42 +3,48 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "subnetId": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Subnet ID to associate VM to."
+      }
     },
     "loadbalancerId": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Load Balancer Id to associate VM to."
+      }
     },
     "numberOfInstances": {
       "type": "int",
-      "defaultValue": 2,
-      "minValue": 2,
-      "maxValue": 5,
       "metadata": {
         "description": "Number of VMs to deploy, limit 5 since this sample is using a single storage account"
-      }
+      },
+      "defaultValue": 2,
+      "minValue": 2,
+      "maxValue": 5
     },
     "vmName": {
+      "type": "string",
       "metadata": {
         "description": "Virtual Machine 1 Server Name."
       },
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "db"
+      "defaultValue": "db",
+      "minLength": 1
     },
     "vmSize": {
+      "type": "string",
       "metadata": {
         "description": "The virtual machine server size."
       },
-      "type": "string",
       "defaultValue": "Standard_DS1_v2"
     },
     "adminUserName": {
+      "type": "string",
       "metadata": {
         "description": "Linux servers admin user account name."
       },
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "azureuser"
+      "defaultValue": "azureuser",
+      "minLength": 1
     },
     "sshKeyData": {
       "type": "string",
@@ -47,10 +53,10 @@
       }
     },
     "ubuntuOSVersion": {
+      "type": "string",
       "metadata": {
         "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version."
       },
-      "type": "string",
       "defaultValue": "16.04.0-LTS",
       "allowedValues": [
         "12.04.5-LTS",

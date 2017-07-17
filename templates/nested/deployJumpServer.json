@@ -3,39 +3,39 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "subnetId": {
+      "type": "string",
       "metadata": {
         "description": "Subnet ID to associate VM to."
-      },
-      "type": "string"
+      }
     },
     "nsgId": {
+      "type": "string",
       "metadata": {
         "description": "Network Security Group allowing Remote Access"
-      },
-      "type": "string"
+      }
     },
     "vmName": {
+      "type": "string",
       "metadata": {
         "description": "Virtual Machine 1 Server Name."
       },
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "jumpserver"
+      "defaultValue": "jumpserver",
+      "minLength": 1
     },
     "vmSize": {
+      "type": "string",
       "metadata": {
         "description": "The virtual machine server size."
       },
-      "type": "string",
       "defaultValue": "Standard_A1"
     },
     "adminUserName": {
+      "type": "string",
       "metadata": {
         "description": "Linux servers admin user account name."
       },
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "azureuser"
+      "defaultValue": "azureuser",
+      "minLength": 1
     },
     "publicSSHKeyData": {
       "type": "string",
@@ -44,10 +44,10 @@
       }
     },
     "ubuntuOSVersion": {
+      "type": "string",
       "metadata": {
         "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version."
       },
-      "type": "string",
       "defaultValue": "16.04.0-LTS",
       "allowedValues": [
         "12.04.5-LTS",
@@ -65,8 +65,8 @@
   "resources": [
     {
       "comments": "## Public IP Address ##",
-      "name": "[variables('PublicIpName')]",
       "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('PublicIpName')]",
       "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
       "tags": {
@@ -78,8 +78,8 @@
     },
     {
       "comments": "## Network Interface ##",
-      "name": "[variables('NicName')]",
       "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('NicName')]",
       "apiVersion": "2016-03-30",
       "location": "[resourceGroup().location]",
       "tags": {

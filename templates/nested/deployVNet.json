@@ -3,7 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "unique": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Small unique string."
+      }
     },
     "vnetPrefix": {
       "type": "string",
@@ -68,9 +71,10 @@
   },
   "resources": [
     {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/networkSecurityGroups",
+      "comments": "## Network Security Group ##",
       "name": "[variables('nsg1Name')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2015-05-01-preview",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "Network Security Group - Front"
@@ -95,9 +99,10 @@
       }
     },
     {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/networkSecurityGroups",
+      "comments": "## Network Security Group ##",
       "name": "[variables('nsg2Name')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2015-05-01-preview",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "Network Security Group - Back"
@@ -122,9 +127,10 @@
       }
     },
     {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/networkSecurityGroups",
+      "comments": "## Network Security Group ##",
       "name": "[variables('nsg3Name')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2015-05-01-preview",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "Network Security Group - dmz"
@@ -149,9 +155,10 @@
       }
     },
     {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/networkSecurityGroups",
+      "comments": "## Network Security Group ##",
       "name": "[variables('nsg4Name')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2015-05-01-preview",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "Network Security Group - Manage"
@@ -207,8 +214,8 @@
       "comments": "## Virtual Network ##",
       "name": "[variables('VNetName')]",
       "type": "Microsoft.Network/virtualNetworks",
-      "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg1Name'))]",
         "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsg2Name'))]",

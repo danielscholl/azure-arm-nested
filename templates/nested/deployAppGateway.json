@@ -1,0 +1,147 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "unique": {
+      "type": "string",
+      "metadata": {
+        "description": "Small unique string."
+      }
+    },
+    "subnetId": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet ID to associate VM to."
+      }
+    }
+  },
+  "variables": {
+    "AppGwName": "[concat(parameters('unique'), '-appgw')]",
+    "AppGwId": "[resourceId('Microsoft.Network/applicationGateways', variables('AppGwName'))]",
+    "PublicIpName": "[concat(variables('AppGwName'), '-ip')]",
+    "PublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('PublicIpName'))]",
+    "AppGwBEPoolName": "BePool",
+    "AppGwBEPoolId": "[concat(variables('AppGwId'), '/backendAddressPools/', variables('AppGwBEPoolName'))]"
+  },
+  "resources": [
+    {
+      "comments": "## Public IP ##",
+      "name": "[variables('PublicIpName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Public IP Address"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic"
+      }
+    },
+    {
+      "comments": "## Application Gateway ##",
+      "name": "[variables('AppGwName')]",
+      "type": "Microsoft.Network/applicationGateways",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2017-03-01",
+      "dependsOn": [
+        "[variables('PublicIpId')]"
+      ],
+      "tags": {
+        "displayName": "Application Gateway"
+      },
+      "properties": {
+        "sku": {
+          "name": "Standard_Small",
+          "tier": "Standard",
+          "capacity": "2"
+        },
+        "gatewayIPConfigurations": [
+          {
+            "name": "appGwIpConfig",
+            "properties": {
+              "subnet": {
+                "id": "[parameters('subnetId')]"
+              }
+            }
+          }
+        ],
+        "frontendIPConfigurations": [
+          {
+            "name": "appGwFrontendIP",
+            "properties": {
+              "PublicIPAddress": {
+                "id": "[variables('PublicIpId')]"
+              }
+            }
+          }
+        ],
+        "frontendPorts": [
+          {
+            "name": "AppGwFEPort",
+            "properties": {
+              "Port": "80"
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('AppGwBEPoolName')]"
+          }
+        ],
+        "backendHttpSettingsCollection": [
+          {
+            "name": "appGwBackendHttpSettings",
+            "properties": {
+              "Port": "80",
+              "Protocol": "Http",
+              "CookieBasedAffinity": "Disabled"
+            }
+          }
+        ],
+        "httpListeners": [
+          {
+            "name": "appGwHttpListener",
+            "properties": {
+              "FrontendIPConfiguration": {
+                "Id": "[concat(variables('AppGwId'), '/frontendIPConfigurations/appGwFrontendIP')]"
+              },
+              "FrontendPort": {
+                "Id": "[concat(variables('AppGwId'), '/frontendPorts/AppGwFEPort')]"
+              },
+              "Protocol": "Http",
+              "SslCertificate": null
+            }
+          }
+        ],
+        "requestRoutingRules": [
+          {
+            "Name": "rule1",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[concat(variables('AppGwId'), '/httpListeners/appGwHttpListener')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(variables('AppGwId'), '/backendAddressPools/', variables('AppGwBEPoolName'))]"
+              },
+              "backendHttpSettings": {
+                "id": "[concat(variables('AppGwId'), '/backendHttpSettingsCollection/appGwBackendHttpSettings')]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "appGateway": {
+      "type": "object",
+      "value": {
+        "id": "[variables('AppGwId')]",
+        "name": "[variables('AppGwName')]",
+        "bePoolId": "[variables('AppGwBEPoolId')]"
+      }
+    }
+  }
+}
