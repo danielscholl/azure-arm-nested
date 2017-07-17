@@ -79,10 +79,11 @@ EOF1
       fi;
 
       if [ ${item} == 'Front' ]; then
+
 ################################  FILE START
 cat >> config/.inventory << EOF1
 [front]
-$(az vmss nic list  -g ${i} --vmss-name ${i}-vmss --query [].ipConfigurations[].privateIpAddress -otsv)
+$(az vmss nic list  -g ${i} --vmss-name ${UNIQUE}-vmss --query [].ipConfigurations[].privateIpAddress -otsv)
 
 EOF1
 ################################  FILE END
@@ -91,8 +92,4 @@ EOF1
   done;
 fi;
 
-
-
-
-
-# ansible-playbook -i config/inventory ./config/pb.jumpserver.yml
+ansible-playbook -i config/inventory ./config/pb.jumpserver.yml
