@@ -2,6 +2,8 @@
 
 This reference architecture shows a solution for running an N-tier application.
 
+Single Region Deployment:  All resources deployed into a single region.
+
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdanielscholl%2Fazure-arm-nested%2Fmaster%2Ftemplates%2FdeployAzure.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
@@ -10,11 +12,12 @@ This reference architecture shows a solution for running an N-tier application.
 </a>
 
 
+Multiple Region Deployment:
 
-The desire was to have the deployment split into multiple resource groups.  The result of this decision then requires
-the templates to be orchestrated somewhat by a script which is a bash script using Azure CLI 2.0.
+In order to RBAC protect certain items the desire was to split the deployment into multiple regions. Region 1 -- Virtual Network, Jumpserver, Diagnostic Storage.  Region 2 -- Backend Servers and Load Balancer.  Region 3 -- Frontend Servers and App Gateway.  Region 4 -- OMS Workspace.  
 
-To deploy this solution:
+The best solution to make this happen was to create bash scripts using CLI 2.0 and templates together.
+
 
 1. Clone the Solution
 
