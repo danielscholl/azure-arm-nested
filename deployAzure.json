@@ -51,14 +51,14 @@
       },
       "defaultValue": "10.2.0.0/24"
     },
-    "frontendPrefix": {
+    "frontPrefix": {
       "type": "string",
       "metadata": {
         "description": "Subnet 1 Address Prefix (CIDR)"
       },
       "defaultValue": "10.2.0.0/25"
     },
-    "backendPrefix": {
+    "backPrefix": {
       "type": "string",
       "metadata": {
         "description": "Subnet 2 Address Prefix (CIDR)"
@@ -144,10 +144,10 @@
             "value": "[parameters('vnetPrefix')]"
           },
           "subnet1Prefix": {
-            "value": "[parameters('frontendPrefix')]"
+            "value": "[parameters('frontPrefix')]"
           },
           "subnet2Prefix": {
-            "value": "[parameters('backendPrefix')]"
+            "value": "[parameters('backPrefix')]"
           },
           "subnet3Prefix": {
             "value": "[parameters('dmzPrefix')]"

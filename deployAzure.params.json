@@ -2,17 +2,14 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "unique": {
-      "value": "<your_unique_string>"
-    },
     "servicePrincipalAppId": {
-      "value": "<user_object_id>"
+      "value": "<YOUR_OBJECT_ID>"
     },
     "jumpserverUser": {
       "value": "azureuser"
     },
     "jumpserverSSHKey": {
-      "value": "<ssh_public_key>"
+      "value": "<YOUR_SSH_KEY>"
     },
     "jumpserverName": {
       "value": "jumpserver"
@@ -23,10 +20,10 @@
     "vnetPrefix": {
       "value": "10.1.0.0/24"
     },
-    "frontendPrefix": {
+    "frontPrefix": {
       "value": "10.1.0.0/25"
     },
-    "backendPrefix": {
+    "backPrefix": {
       "value": "10.1.0.128/26"
     },
     "dmzPrefix": {
@@ -42,7 +39,13 @@
       "value": "db"
     },
     "backendServerSize": {
-      "value": "Standard_DS1_v2"
+      "value": "Standard_A1"
+    },
+    "backendLoadBalanceIP": {
+      "value": "10.2.0.132"
+    },
+    "scaleSetServerSize": {
+      "value": "Standard_A1"
     },
     "scaleSetInstanceCount": {
       "value": 2
