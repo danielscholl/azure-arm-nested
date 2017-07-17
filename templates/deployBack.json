@@ -14,6 +14,12 @@
         "description": "Backend Subnet Id"
       }
     },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Backend Subnet Name"
+      }
+    },
     "keyVaultId": {
       "type": "string",
       "metadata": {
@@ -34,6 +40,14 @@
         "description": "The virtual machine server size."
       },
       "defaultValue": "Standard_DS1_v2"
+    },
+    "vmCount": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of machines to deploy."
+      },
+      "defaultValue": 2,
+      "minValue": 2
     },
     "loadBalancerIp": {
       "type": "string",
@@ -82,6 +96,9 @@
           "subnetId": {
             "value": "[parameters('subnetId')]"
           },
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
+          },
           "loadBalancerId": {
             "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value.id]"
           },
@@ -90,6 +107,9 @@
           },
           "vmSize": {
             "value": "[parameters('vmSize')]"
+          },
+          "numberOfInstances": {
+            "value": "[parameters('vmCount')]"
           },
           "adminUserName": {
             "reference": {

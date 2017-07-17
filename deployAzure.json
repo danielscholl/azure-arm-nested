@@ -101,6 +101,14 @@
       "type": "string",
       "defaultValue": "Standard_DS1_v2"
     },
+    "backendServerCount": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of machines to deploy."
+      },
+      "defaultValue": 2,
+      "minValue": 2
+    },
     "backendLoadBalanceIP": {
       "type": "string",
       "metadata": {
@@ -290,6 +298,9 @@
           "subnetId": {
             "value": "[reference('TemplateVNet').outputs.subnets.value.subnet2Id]"
           },
+          "subnetName": {
+            "value": "[reference('TemplateVNet').outputs.subnets.value.subnet2Name]"
+          },
           "loadBalancerId": {
             "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value.id]"
           },
@@ -298,6 +309,9 @@
           },
           "vmSize": {
             "value": "[parameters('backendServerSize')]"
+          },
+          "vmCount": {
+            "value": "[parameters('backendServerCount')]"
           },
           "adminUserName": {
             "reference": {

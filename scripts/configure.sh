@@ -47,11 +47,52 @@ $(az vm list-ip-addresses -g ${UNIQUE} -n ${HOST} --query [].virtualMachine.netw
 EOF1
 
 
+if [ -f config/.inventory ]; then rm config/.inventory; fi
+
+group=($(az group list --query "[?contains(name,'${UNIQUE}')]".name -otsv))
+
+if [ ${#group[@]} == 1 ]; then
+
+################################  FILE START
 cat > config/.inventory << EOF1
 [back]
-$(az vm list-ip-addresses -g ${UNIQUE}-Back  --query [].virtualMachine.network.privateIpAddresses -otsv)
+$(az vm list-ip-addresses -g ${UNIQUE}  --query [].virtualMachine.network.privateIpAddresses -otsv)
 
 [front]
+$(az vmss nic list  -g ${UNIQUE} --vmss-name ${UNIQUE}-vmss --query [].ipConfigurations[].privateIpAddress -otsv)
 EOF1
+################################  FILE END
 
-ansible-playbook -i config/inventory ./config/pb.jumpserver.yml
+else
+
+  for i in "${group[@]}"
+    do :
+      item=$(sed "s/${UNIQUE}-//g" <<<"$i")
+      if [ ${item} == 'Back' ]; then
+################################  FILE START
+cat >> config/.inventory << EOF1
+[back]
+$(az network nic list --resource-group ${i} --query [].ipConfigurations[].privateIpAddress -otsv)
+
+EOF1
+################################  FILE END
+      fi;
+
+      if [ ${item} == 'Front' ]; then
+################################  FILE START
+cat >> config/.inventory << EOF1
+[front]
+$(az vmss nic list  -g ${i} --vmss-name ${i}-vmss --query [].ipConfigurations[].privateIpAddress -otsv)
+
+EOF1
+################################  FILE END
+
+      fi;
+  done;
+fi;
+
+
+
+
+
+# ansible-playbook -i config/inventory ./config/pb.jumpserver.yml
