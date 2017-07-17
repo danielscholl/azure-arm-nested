@@ -7,6 +7,9 @@
     },
     "vmSize": {
       "value": "Standard_A1"
+    },
+    "loadBalancerIp": {
+      "value": "10.1.0.132"
     }
   }
 }

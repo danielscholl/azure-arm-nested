@@ -21,19 +21,26 @@
       }
     },
     "vmName": {
+      "type": "string",
       "metadata": {
         "description": "Virtual Machine 1 Server Name."
       },
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "db"
+      "defaultValue": "db",
+      "minLength": 1
     },
     "vmSize": {
+      "type": "string",
       "metadata": {
         "description": "The virtual machine server size."
       },
-      "type": "string",
       "defaultValue": "Standard_DS1_v2"
+    },
+    "loadBalancerIp": {
+      "type": "string",
+      "metadata": {
+        "description": "Static IP Address for the Load Balancer."
+      },
+      "defaultValue": "10.1.0.132"
     }
   },
   "variables": {},
@@ -54,6 +61,9 @@
           },
           "subnetId": {
             "value": "[parameters('subnetId')]"
+          },
+          "staticIpAddress": {
+            "value": "[parameters('loadBalancerIp')]"
           }
         }
       }

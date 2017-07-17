@@ -13,6 +13,12 @@
       "metadata": {
         "description": "Subnet ID to associate VM to."
       }
+    },
+    "staticIpAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "Static IP Address for the Load Balancer."
+      }
     }
   },
   "variables": {
@@ -35,7 +41,7 @@
           {
             "name": "lbFrontEnd",
             "properties": {
-              "privateIPAddress": "10.1.0.132",
+              "privateIPAddress": "[parameters('staticIpAddress')]",
               "privateIPAllocationMethod": "Static",
               "subnet": {
                 "id": "[parameters('subnetId')]"

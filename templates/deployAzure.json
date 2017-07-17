@@ -49,35 +49,35 @@
       "metadata": {
         "description": "Virtual Network Address Prefix (CIDR)"
       },
-      "defaultValue": "10.1.0.0/24"
+      "defaultValue": "10.2.0.0/24"
     },
     "frontendPrefix": {
       "type": "string",
       "metadata": {
         "description": "Subnet 1 Address Prefix (CIDR)"
       },
-      "defaultValue": "10.1.0.0/25"
+      "defaultValue": "10.2.0.0/25"
     },
     "backendPrefix": {
       "type": "string",
       "metadata": {
         "description": "Subnet 2 Address Prefix (CIDR)"
       },
-      "defaultValue": "10.1.0.128/26"
+      "defaultValue": "10.2.0.128/26"
     },
     "dmzPrefix": {
       "type": "string",
       "metadata": {
         "description": "Subnet 3 Address Prefix (CIDR)"
       },
-      "defaultValue": "10.1.0.192/28"
+      "defaultValue": "10.2.0.192/28"
     },
     "managePrefix": {
       "type": "string",
       "metadata": {
         "description": "Subnet 4 Address Prefix (CIDR)"
       },
-      "defaultValue": "10.1.0.208/28"
+      "defaultValue": "10.2.0.208/28"
     },
     "remoteAccessACL": {
       "type": "string",
@@ -100,6 +100,13 @@
       },
       "type": "string",
       "defaultValue": "Standard_DS1_v2"
+    },
+    "backendLoadBalanceIP": {
+      "type": "string",
+      "metadata": {
+        "description": "Static IP Address for the Load Balancer."
+      },
+      "defaultValue": "10.2.0.132"
     },
     "scaleSetServerSize": {
       "metadata": {
@@ -262,6 +269,9 @@
           },
           "subnetId": {
             "value": "[reference('TemplateVNet').outputs.subnets.value.subnet2Id]"
+          },
+          "staticIpAddress": {
+            "value": "[parameters('backendLoadBalanceIP')]"
           }
         }
       }
