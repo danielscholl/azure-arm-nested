@@ -8,12 +8,6 @@
         "description": "Subnet ID to associate VM to."
       }
     },
-    "subnetName": {
-      "type": "string",
-      "metadata": {
-        "description": "Backend Subnet Name"
-      }
-    },
     "loadbalancerId": {
       "type": "string",
       "metadata": {
@@ -95,9 +89,7 @@
       "name": "[concat(parameters('vmName'), copyindex(), '-nic')]",
       "apiVersion": "2016-03-30",
       "location": "[resourceGroup().location]",
-      "tags": {
-        "subnet": "[parameters('subnetName')]"
-      },
+      "tags": {},
       "copy": {
         "name": "nicLoop",
         "count": "[parameters('numberOfInstances')]"

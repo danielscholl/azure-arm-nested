@@ -84,10 +84,6 @@ SUBNETID=$(az network vnet subnet show --name back \
   --resource-group ${UNIQUE} \
   --vnet-name ${UNIQUE}-vnet \
   --query id -otsv)
-SUBNETNAME=$(az network vnet subnet show --name back \
-  --resource-group ${UNIQUE} \
-  --vnet-name ${UNIQUE}-vnet \
-  --query name -otsv)
 KEYVAULT=$(az keyvault show --name ${UNIQUE}-kv \
   --query id -otsv)
 
@@ -97,7 +93,7 @@ az group deployment create \
   --template-uri ${URL} \
   --parameters @.params/deploy${CATEGORY}.params.json \
   --parameters uniquePrefix=${UNIQUE} sasToken=?$TOKEN \
-  --parameters keyVaultId=${KEYVAULT} subnetId=${SUBNETID} subnetName=${SUBNETNAME} \
+  --parameters keyVaultId=${KEYVAULT} subnetId=${SUBNETID} \
   --query [properties.outputs] -ojsonc
 
 

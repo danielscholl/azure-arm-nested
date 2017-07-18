@@ -14,12 +14,6 @@
         "description": "Backend Subnet Id"
       }
     },
-    "subnetName": {
-      "type": "string",
-      "metadata": {
-        "description": "Backend Subnet Name"
-      }
-    },
     "keyVaultId": {
       "type": "string",
       "metadata": {
@@ -95,9 +89,6 @@
         "parameters": {
           "subnetId": {
             "value": "[parameters('subnetId')]"
-          },
-          "subnetName": {
-            "value": "[parameters('subnetName')]"
           },
           "loadBalancerId": {
             "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value.id]"
