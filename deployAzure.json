@@ -307,7 +307,7 @@
           "vmSize": {
             "value": "[parameters('backendServerSize')]"
           },
-          "vmCount": {
+          "numberOfInstances": {
             "value": "[parameters('backendServerCount')]"
           },
           "adminUserName": {
