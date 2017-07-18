@@ -298,9 +298,6 @@
           "subnetId": {
             "value": "[reference('TemplateVNet').outputs.subnets.value.subnet2Id]"
           },
-          "subnetName": {
-            "value": "[reference('TemplateVNet').outputs.subnets.value.subnet2Name]"
-          },
           "loadBalancerId": {
             "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value.id]"
           },
