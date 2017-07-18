@@ -56,7 +56,7 @@ if [ ${#group[@]} == 1 ]; then
 ################################  FILE START
 cat > config/.inventory << EOF1
 [back]
-$(az vm list-ip-addresses -g ${UNIQUE}  --query [].virtualMachine.network.privateIpAddresses -otsv)
+$(az network nic list --resource-group ${UNIQUE} --query "[].ipConfigurations[?contains(subnet.id, 'back')].privateIpAddress" -otsv)
 
 [front]
 $(az vmss nic list  -g ${UNIQUE} --vmss-name ${UNIQUE}-vmss --query [].ipConfigurations[].privateIpAddress -otsv)
