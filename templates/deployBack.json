@@ -20,6 +20,18 @@
         "description": "KeyVault Id"
       }
     },
+    "storageAccount": {
+      "type": "string",
+      "metadata": {
+        "description": "Diagnostics Storage Account Name"
+      }
+    },
+    "storageKey": {
+      "type": "string",
+      "metadata": {
+        "description": "Diagnostics Storage Account Key"
+      }
+    },
     "vmName": {
       "type": "string",
       "metadata": {
@@ -92,6 +104,12 @@
           },
           "loadBalancerId": {
             "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value.id]"
+          },
+          "storageAccount": {
+            "value": "[parameters('storageAccount')]"
+          },
+          "storageKey": {
+            "value": "[parameters('storageKey')]"
           },
           "vmName": {
             "value": "[parameters('vmName')]"

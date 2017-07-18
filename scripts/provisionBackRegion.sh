@@ -46,7 +46,7 @@ az account set --subscription ${AZURE_SUBSCRIPTION}
 
 
 ########################################
-## Retrieving Parametere Information  ##
+## Retrieving Parameter Information  ##
 ########################################
 CATEGORY=Temp
 RESOURCE_GROUP=${UNIQUE}-${CATEGORY}
@@ -59,9 +59,16 @@ tput setaf 2; echo "Retrieving Connection for Storage Account ${STORAGE_ACCOUNT}
 CONNECTION=$(GetStorageConnection ${RESOURCE_GROUP} ${STORAGE_ACCOUNT})
 echo $CONNECTION
 
+tput setaf 2; echo "Retrieving Key for Storage Account ${STORAGE_ACCOUNT}..." ; tput sgr0
+STORAGEKEY=$(az storage account keys list --account-name ${STORAGE_ACCOUNT} \
+  --resource-group ${RESOURCE_GROUP} \
+  --query '[0].value' \
+  --output tsv)
+
 tput setaf 2; echo 'Generating a SAS Token for Container...' ; tput sgr0
 TOKEN=$(CreateSASToken ${AZURE_STORAGE_CONTAINER} ${CONNECTION})
 echo $TOKEN
+
 
 
 #################################
@@ -87,6 +94,7 @@ SUBNETID=$(az network vnet subnet show --name back \
 KEYVAULT=$(az keyvault show --name ${UNIQUE}-kv \
   --query id -otsv)
 
+
 tput setaf 2; echo "Deploying ${CATEGORY} Template..." ; tput sgr0
 az group deployment create \
   --resource-group ${RESOURCE_GROUP} \
@@ -94,6 +102,7 @@ az group deployment create \
   --parameters @.params/deploy${CATEGORY}.params.json \
   --parameters uniquePrefix=${UNIQUE} sasToken=?$TOKEN \
   --parameters keyVaultId=${KEYVAULT} subnetId=${SUBNETID} \
+  --parameters storageAccount=${STORAGE_ACCOUNT} storageKey=${STORAGEKEY} \
   --query [properties.outputs] -ojsonc
 
 

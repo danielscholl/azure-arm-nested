@@ -301,6 +301,12 @@
           "loadBalancerId": {
             "value": "[reference('TemplateLoadBalancer').outputs.loadBalancer.value.id]"
           },
+          "storageAccount": {
+            "value": "[reference('TemplateStorage').outputs.storageAccount.value.name]"
+          },
+          "storageKey": {
+            "value": "[reference('TemplateStorage').outputs.storageAccount.value.key]"
+          },
           "vmName": {
             "value": "[parameters('backendServerNamePrefix')]"
           },
